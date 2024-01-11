@@ -55,22 +55,7 @@ session_start();
             
           </li>
         </ul>
-        <ul class="navbar-nav ms-auto">
-         
-         
-         <li class="nav-item dropdown d-none d-lg-block user-dropdown">
-            <a class="nav-link" id="UserDropdown" href="#" data-bs-toggle="dropdown" aria-expanded="false">
-              <img class="img-xs rounded-circle" src="../../images/faces/face8.jpg" alt="Profile image"> </a>
-            <div class="dropdown-menu dropdown-menu-right navbar-dropdown" aria-labelledby="UserDropdown">
-              <div class="dropdown-header text-center">
-                <img class="img-md rounded-circle" src="../../images/faces/face8.jpg" alt="Profile image">
-                <p class="mb-1 mt-3 font-weight-semibold">Allen Moreno</p>
-               </div>
-              <a class="dropdown-item"><i class="dropdown-item-icon mdi mdi-account-outline text-primary me-2"></i> Pengaturan </a>
-              <a href="../../../logout.php" class="dropdown-item"><i class="dropdown-item-icon mdi mdi-power text-primary me-2"></i>Keluar</a>
-            </div>
-          </li>
-        </ul>
+        
         <button class="navbar-toggler navbar-toggler-right d-lg-none align-self-center" type="button" data-bs-toggle="offcanvas">
           <span class="mdi mdi-menu"></span>
         </button>
@@ -117,21 +102,18 @@ session_start();
               <i class="menu-arrow"></i>
             </a>
             <div class="collapse" id="form-elements">
-            <ul class="nav flex-column sub-menu">
-                <li class="nav-item"><a class="nav-link" href="../../pages/forms/input_pendaftaran.php">Form Pendaftaran</a></li>
+              <ul class="nav flex-column sub-menu">
+                <li class="nav-item"><a class="nav-link" href="input_pendaftaran.php">Pendaftaran</a></li>
               </ul>
               <ul class="nav flex-column sub-menu">
-                <li class="nav-item"><a class="nav-link" href="../../pages/forms/input_publikasi.php">Form Publikasi</a></li>
+                <li class="nav-item"><a class="nav-link" href="input_publikasi.php">Publikasi</a></li>
               </ul>
               <ul class="nav flex-column sub-menu">
-                <li class="nav-item"><a class="nav-link" href="../../pages/forms/input_berkas.php">Form Berkas</a></li>
-              </ul>
-              <ul class="nav flex-column sub-menu">
-                <li class="nav-item"><a class="nav-link" href="../../pages/forms/input_pengguna.php">Pengguna Baru</a></li>
+                <li class="nav-item"><a class="nav-link" href="input_pengguna.php">Pengguna Baru</a></li>
               </ul>
             </div>
           </li>
-          
+
           <li class="nav-item">
             <a class="nav-link" data-bs-toggle="collapse" href="#tables" aria-expanded="false" aria-controls="tables">
               <i class="menu-icon mdi mdi-table"></i>
@@ -140,13 +122,25 @@ session_start();
             </a>
             <div class="collapse" id="tables">
               <ul class="nav flex-column sub-menu">
-                <li class="nav-item"> <a class="nav-link" href="../../pages/tables/data_pendaftaran.php">Data Ormas Baru</a></li>
+                <li class="nav-item"> <a class="nav-link" href="data_pendaftaran.php">Data Ormas Baru</a></li>
               </ul>
             </div>
             
             <div class="collapse" id="tables">
               <ul class="nav flex-column sub-menu">
-                <li class="nav-item"> <a class="nav-link" href="../../pages/tables/tambah_akunormas.php">Akun Baru Ormas</a></li>
+                <li class="nav-item"> <a class="nav-link" href="tambah_akunormas.php">Akun Baru Ormas</a></li>
+              </ul>
+            </div>
+
+            <div class="collapse" id="tables">
+              <ul class="nav flex-column sub-menu">
+                <li class="nav-item"> <a class="nav-link" href="biodata.php">Biodata Ormas</a></li>
+              </ul>
+            </div>
+
+            <div class="collapse" id="tables">
+              <ul class="nav flex-column sub-menu">
+                <li class="nav-item"> <a class="nav-link" href="input_berkas.php">Berkas</a></li>
               </ul>
             </div>
           </li>
@@ -159,7 +153,7 @@ session_start();
             </a>
              <div class="collapse" id="tables">
               <ul class="nav flex-column sub-menu">
-                <li class="nav-item"> <a class="nav-link" href="../../pages/tables/data_aspirasi.php">Data Aspirasi</a></li>
+                <li class="nav-item"> <a class="nav-link" href="data_aspirasi.php">Data Aspirasi</a></li>
               </ul>
             </div>
           </li>
@@ -172,15 +166,22 @@ session_start();
             </a>
             <div class="collapse" id="icons">
               <ul class="nav flex-column sub-menu">
-                <li class="nav-item"> <a class="nav-link" href="../../pages/forms/verifikasi.php">Verifikasi</a></li>
+                <li class="nav-item"> <a class="nav-link" href="verifikasi.php">Verifikasi</a></li>
               </ul>
               <ul class="nav flex-column sub-menu">
-                <li class="nav-item"> <a class="nav-link" href="../../pages/forms/tanggapi.php">Tanggapi</a></li>
+                <li class="nav-item"> <a class="nav-link" href="balasan_ormas.php">Balasan Ormas</a></li>
               </ul>
 			       <ul class="nav flex-column sub-menu">
-                <li class="nav-item"> <a class="nav-link" href="../../pages/forms/laporan.php">Laporan</a></li>
+                <li class="nav-item"> <a class="nav-link" href="laporan.php">Aduan Selesai</a></li>
               </ul>
             </div>
+          </li>
+          <li class="nav-item">
+            <a class="nav-link" href="../../../logout.php">
+                <i class="menu-icon mdi mdi-account-circle-outline"></i>
+                <span class="menu-title">Keluar</span>
+                
+            </a>
           </li>
 			</ul>
       </nav>
@@ -202,7 +203,6 @@ session_start();
                               <th>Nama Pengadu</th>
                               <th>Nomor Hp</th>
                               <th>Isi</th>
-                              <th>Bukti</th>
                               <th>Tanggal Aduan</th>
                               <th>Status</th>
                              </tr>
@@ -220,10 +220,7 @@ session_start();
                             <td><?= $data['nama'] ?></td>
                             <td><?= $data['no_hp'] ?></td>
                             <td><?= $data['isi'] ?></td>
-                            <td>
-                            <img  src ="../../pages/file/bukti_pengaduan/<?= $data['file']?>"  style="width:80px; height:100px;">
-                            </td>
-                            <td><?= $data['tgl_aduan'] ?></td>
+                           <td><?= $data['tgl_aduan'] ?></td>
                             <!-- Button trigger modal -->
                             <td>
                               <button type="button" class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#staticBackdrop">
@@ -260,7 +257,7 @@ session_start();
                                                         <?php
                                         if (!empty($data['file'])) {
                                             echo '<br>';
-                                            echo '<img src="../../pages/file/bukti_pengaduan/' . $data['file'] . '" alt="" height="210px" style="padding-top:10px">';
+                                            echo '<img src="../../../images/bukti_pengaduan/' . $data['file'] . '" alt="" height="210px" style="padding-top:10px">';
                                         }
                                         ?>
                                       <div align=left>
@@ -272,13 +269,13 @@ session_start();
                                         <input type="hidden" name="kd_pengaduan" value="<?= $data['kd_pengaduan'] ?>">
                                         <div class="form-group">
                                             <span class="response-label">Ormas Tujuan : </span>
-                                            <select class="form-control" name="ormas_tujuan" >
+                                            <select class="form-control" name="id_pengguna" >
                                               <option>Silahkan Pilih</option>
                                               <?php
                                                 include "../../setup/koneksi.php";
-                                                $query = mysqli_query($koneksi, "SELECT * FROM tb_pendaftaran") or die (mysqli_error($koneksi));
+                                                $query = mysqli_query($koneksi, "SELECT id_pengguna, nama FROM tb_pengguna ") or die (mysqli_error($koneksi));
                                                 while($data = mysqli_fetch_array($query)){
-                                                  echo"<option value=$data[kd_pendaftaran]> $data[nama] </option>";
+                                                  echo"<option value=$data[id_pengguna]> $data[nama] </option>";
                                                 }
                                               ?>
                                             </select>
@@ -294,13 +291,13 @@ session_start();
                                     <?php
                                     if(isset($_POST['kirim'])){
                                         $kd_pengaduan = $_POST['kd_pengaduan'];
-                                        $ormas_tujuan = $_POST['ormas_tujuan'];
+                                        $id_pengguna = $_SESSION['id_pengguna'];
                                         $tanggal = date('Y-m-d');
                                         $jam = date('H:i:s');
                                         $current_time = date('Y-m-d H:i:s');
 
                                         // Update status 
-                                        $queryUpdate = "UPDATE tb_pengaduan SET status = 'dikirim ke ormas', ormas_tujuan = '$ormas_tujuan', tgl_tanggapan = '$current_time' WHERE kd_pengaduan = '$kd_pengaduan'";
+                                        $queryUpdate = "UPDATE tb_pengaduan SET status = 'dikirim ke ormas', id_pengguna = '$id_pengguna', tgl_tanggapan = '$current_time' WHERE kd_pengaduan = '$kd_pengaduan'";
                                         
                                         if ($koneksi->query($queryUpdate) === TRUE) {
                                             echo "<script>

@@ -25,6 +25,7 @@
   <link rel="stylesheet" href="../../css/vertical-layout-light/style.css">
   <!-- endinject -->
   <link rel="shortcut icon" href="../../images/favicon.png" />
+  <link rel="stylesheet" href="https://cdn.datatables.net/1.13.7/css/jquery.dataTables.min.css">
 </head>
 
 <body>
@@ -52,22 +53,7 @@
           <h1 class="welcome-text">Selamat Datang <span class="text-black fw-bold"><?php echo $_SESSION['nama'];?></span></h1>
             </li>
         </ul>
-        <ul class="navbar-nav ms-auto">
-           
-         <li class="nav-item dropdown d-none d-lg-block user-dropdown">
-            <a class="nav-link" id="UserDropdown" href="#" data-bs-toggle="dropdown" aria-expanded="false">
-              <img class="img-xs rounded-circle" src="../../images/faces/face8.jpg" alt="Profile image"> </a>
-            <div class="dropdown-menu dropdown-menu-right navbar-dropdown" aria-labelledby="UserDropdown">
-              <div class="dropdown-header text-center">
-                <img class="img-md rounded-circle" src="../../images/faces/face8.jpg" alt="Profile image">
-                <p class="mb-1 mt-3 font-weight-semibold">Allen Moreno</p>
-                
-              </div>
-              <a class="dropdown-item"><i class="dropdown-item-icon mdi mdi-account-outline text-primary me-2"></i> Pengaturan</a>
-              <a href="../../../logout.php" class="dropdown-item"><i class="dropdown-item-icon mdi mdi-power text-primary me-2"></i>Keluar</a>
-            </div>
-          </li>
-        </ul>
+        
         <button class="navbar-toggler navbar-toggler-right d-lg-none align-self-center" type="button" data-bs-toggle="offcanvas">
           <span class="mdi mdi-menu"></span>
         </button>
@@ -114,21 +100,18 @@
               <i class="menu-arrow"></i>
             </a>
             <div class="collapse" id="form-elements">
-            <ul class="nav flex-column sub-menu">
-                <li class="nav-item"><a class="nav-link" href="../../pages/forms/input_pendaftaran.php">Form Pendaftaran</a></li>
+              <ul class="nav flex-column sub-menu">
+                <li class="nav-item"><a class="nav-link" href="input_pendaftaran.php">Pendaftaran</a></li>
               </ul>
               <ul class="nav flex-column sub-menu">
-                <li class="nav-item"><a class="nav-link" href="../../pages/forms/input_publikasi.php">Form Publikasi</a></li>
+                <li class="nav-item"><a class="nav-link" href="input_publikasi.php">Publikasi</a></li>
               </ul>
               <ul class="nav flex-column sub-menu">
-                <li class="nav-item"><a class="nav-link" href="../../pages/forms/input_berkas.php">Form Berkas</a></li>
-              </ul>
-              <ul class="nav flex-column sub-menu">
-                <li class="nav-item"><a class="nav-link" href="../../pages/forms/input_pengguna.php">Pengguna Baru</a></li>
+                <li class="nav-item"><a class="nav-link" href="input_pengguna.php">Pengguna Baru</a></li>
               </ul>
             </div>
           </li>
-          
+
           <li class="nav-item">
             <a class="nav-link" data-bs-toggle="collapse" href="#tables" aria-expanded="false" aria-controls="tables">
               <i class="menu-icon mdi mdi-table"></i>
@@ -137,13 +120,25 @@
             </a>
             <div class="collapse" id="tables">
               <ul class="nav flex-column sub-menu">
-                <li class="nav-item"> <a class="nav-link" href="../../pages/tables/data_pendaftaran.php">Data Ormas Baru</a></li>
+                <li class="nav-item"> <a class="nav-link" href="data_pendaftaran.php">Data Ormas Baru</a></li>
               </ul>
             </div>
             
             <div class="collapse" id="tables">
               <ul class="nav flex-column sub-menu">
-                <li class="nav-item"> <a class="nav-link" href="../../pages/tables/tambah_akunormas.php">Akun Baru Ormas</a></li>
+                <li class="nav-item"> <a class="nav-link" href="tambah_akunormas.php">Akun Baru Ormas</a></li>
+              </ul>
+            </div>
+
+            <div class="collapse" id="tables">
+              <ul class="nav flex-column sub-menu">
+                <li class="nav-item"> <a class="nav-link" href="biodata.php">Biodata Ormas</a></li>
+              </ul>
+            </div>
+
+            <div class="collapse" id="tables">
+              <ul class="nav flex-column sub-menu">
+                <li class="nav-item"> <a class="nav-link" href="input_berkas.php">Berkas</a></li>
               </ul>
             </div>
           </li>
@@ -156,7 +151,7 @@
             </a>
              <div class="collapse" id="tables">
               <ul class="nav flex-column sub-menu">
-                <li class="nav-item"> <a class="nav-link" href="../../pages/tables/data_aspirasi.php">Data Aspirasi</a></li>
+                <li class="nav-item"> <a class="nav-link" href="data_aspirasi.php">Data Aspirasi</a></li>
               </ul>
             </div>
           </li>
@@ -164,21 +159,28 @@
           <li class="nav-item">
             <a class="nav-link" data-bs-toggle="collapse" href="#icons" aria-expanded="false" aria-controls="form-elements">
               <i class="menu-icon mdi mdi mdi-access-point"></i>
-              <span class="menu-title">Informasi</span>
+              <span class="menu-title">Pengaduan</span>
               <i class="menu-arrow"></i>
             </a>
             <div class="collapse" id="icons">
               <ul class="nav flex-column sub-menu">
-                <li class="nav-item"> <a class="nav-link" href="../../pages/tables/dasarhukum.php">Dasar Hukum</a></li>
+                <li class="nav-item"> <a class="nav-link" href="verifikasi.php">Verifikasi</a></li>
               </ul>
               <ul class="nav flex-column sub-menu">
-                <li class="nav-item"> <a class="nav-link" href="../../pages/tables/tatacara_pendaftaran.php">Tata Cara Pendaftaran</a></li>
+                <li class="nav-item"> <a class="nav-link" href="balasan_ormas.php">Balasan Ormas</a></li>
               </ul>
 			       <ul class="nav flex-column sub-menu">
-                <li class="nav-item"> <a class="nav-link" href="../../pages/tables/pengajuan_skt.php">Persyaratan SKT</a></li>
+                <li class="nav-item"> <a class="nav-link" href="laporan.php">Aduan Selesai</a></li>
               </ul>
             </div>
-          </li>  
+          </li>
+          <li class="nav-item">
+            <a class="nav-link" href="../../../logout.php">
+                <i class="menu-icon mdi mdi-account-circle-outline"></i>
+                <span class="menu-title">Keluar</span>
+                
+            </a>
+          </li>
         </ul>
       </nav>
       <!-- partial -->
@@ -188,78 +190,76 @@
             <div class="col-md-4 grid-margin stretch-card">
               <div class="card">
                 <div class="card-body">
-                  <h4 class="card-title">Edit Data Pengguna</h4>
+                <h4 class="card-title">Edit Data Pengguna</h4>
                   <?php
                     include('../../setup/koneksi.php');
-                    if(isset($_GET['update'])){
-                      $query = mysqli_query($koneksi,"SELECT * FROM tb_pengguna WHERE id_pengguna='$_GET[update]'");
-                      $data=mysqli_fetch_array($query);
+                    if (isset($_GET['update'])) {
+                      $query = mysqli_query($koneksi, "SELECT * FROM tb_pengguna WHERE id_pengguna='$_GET[update]'");
+                      $data = mysqli_fetch_array($query);
                     }
-                   
-                    
                   ?>
-                <form class="forms-sample" action="" method="POST">
-                  <div class="form-group">
-                    <label>Nomor Pembuatan</label>
-                    <input type="text" class="form-control " name="id_pengguna" value="<?= isset($data['id_pengguna']) ? $data['id_pengguna'] : ''; ?>"  readonly>
+                  <form class="forms-sample" action="" method="POST">
+  <div class="form-group">
+    <label>Nomor Pembuatan</label>
+    <input type="text" class="form-control" name="id_pengguna" value="<?= isset($data['id_pengguna']) ? $data['id_pengguna'] : ''; ?>" readonly>
+  </div>
+  <div class="form-group">
+    <label>Nama</label>
+    <input type="text" class="form-control form-control-lg" name="nama" value="<?= isset($data['nama']) ? $data['nama'] : ''; ?>" autocomplete="off">
+  </div>
+  <div class="form-group">
+    <label>Username</label>
+    <input type="text" class="form-control form-control-lg" name="username" value="<?= isset($data['username']) ? $data['username'] : ''; ?>" autocomplete="off">
+  </div>
+  <div class="form-group">
+    <label>Password</label>
+    <input type="text" class="form-control form-control-lg" name="password" value="<?= isset($data['password']) ? $data['password'] : ''; ?>" autocomplete="off">
+  </div>
+  <div class="form-group">
+    <label>Level</label>
+    <select class="form-control" name="level">
+      <option value="<?= $data['level']; ?>"> <?= $data['level']; ?> </option>
+      <?php
+      $queryLevel = mysqli_query($koneksi, "SELECT DISTINCT level FROM tb_pengguna") or die(mysqli_error($koneksi));
+      while ($rowLevel = mysqli_fetch_array($queryLevel)) {
+        echo "<option value='{$rowLevel['level']}'> {$rowLevel['level']} </option>";
+      }
+      ?>
+    </select>
+  </div>
+  <button type="submit" class="btn btn-outline-primary btn-icon-text" name="edit" value="edit">
+    <i class="ti-file btn-icon-prepend"></i>Edit
+  </button>
+                      
                   </div>
-                  <div class="form-group">
-                    <label>Nama</label>
-                    <input type="text" class="form-control form-control-lg" name="nama" value="<?= isset($data['nama']) ? $data['nama'] : ''; ?>" >
-                  </div>
-                  <div class="form-group">
-                    <label>Username</label>
-                    <input type="text" class="form-control form-control-lg" name="username" value="<?= isset($data['username']) ? $data['username'] : ''; ?>"  >
-                  </div>
-                  <div class="form-group">
-                    <label>Password</label>
-                    <input type="text" class="form-control form-control-lg" name="password" value="<?= isset($data['password']) ? $data['password'] : ''; ?>"  >
-                  </div>
-                  <div class="form-group">
-                        <label>Level</label>
-                        <select class="form-control" name="level" value="<?= isset($data['level']) ? $data['level'] : ''; ?>">
-                            <?php
-                            echo "<option value={$data['id_pengguna']}> {$data['level']} </option>";
-                            $query = mysqli_query($koneksi, "SELECT * FROM tb_pengguna") or die(mysqli_error($koneksi));
-                            while ($row = mysqli_fetch_array($query)) {
-                                echo "<option value={$row['id_pengguna']}> {$row['level']} </option>";
-                            }
-                            ?>
-                        </select>
-                    </div>
-                    <button type="submit" class="btn btn-outline-primary btn-icon-text" name="edit" value="edit">
-                      <i class="ti-file btn-icon-prepend"></i>Edit
-                  </button>
-                    
                 </div>
               </div>
-            </div>
-             </form>
-             <?php
-                if (isset($_POST['edit'])) {
-                    // Enkapsulasi nilai $_POST['update'] menggunakan mysqli_real_escape_string
-                    $updateValue = mysqli_real_escape_string($koneksi, $_POST['update']);
+              </form>
+              <?php
+  if (isset($_POST['edit'])) {
+    // Enkapsulasi nilai $_POST['id_pengguna'] menggunakan mysqli_real_escape_string
+    $id_pengguna = mysqli_real_escape_string($koneksi, $_POST['id_pengguna']);
 
-                    mysqli_query($koneksi, "UPDATE tb_pengguna SET
-                        id_pengguna = '$_POST[id_pengguna]',
-                        nama = '$_POST[nama]',
-                        username = '$_POST[username]',
-                        password = '$_POST[password]',
-                        level = '$_POST[level]' WHERE id_pengguna = '$updateValue'")
-                        or die(mysqli_error($koneksi));
+    mysqli_query($koneksi, "UPDATE tb_pengguna SET
+      nama = '$_POST[nama]',
+      username = '$_POST[username]',
+      password = '$_POST[password]',
+      level = '$_POST[level]' WHERE id_pengguna = '$id_pengguna'")
+      or die(mysqli_error($koneksi));
 
-                    echo "<script>
-                        alert('Data Anda Berhasil Diubah');
-                        document.location='../../pages/forms/input_pengguna.php';
-                        </script>";
-                }
-                ?>
+    echo "<script>
+      alert('Data Anda Berhasil Diubah');
+      document.location='../../pages/forms/input_pengguna.php';
+      </script>";
+  }
+?>
+
             <div class="col-lg-8 grid-margin stretch-card">
               <div class="card">
                 <div class="card-body">
                   <h4 class="card-title">Data Pembuatan Akun</h4>
                  <div class="table-responsive">
-                    <table class="table">
+                    <table id="example" class="table">
                       <thead>
                         <tr>
                           <th>No</th>
@@ -340,6 +340,11 @@
   <script src="../../js/typeahead.js"></script>
   <script src="../../js/select2.js"></script>
   <!-- End custom js for this page-->
+  <script src="https://code.jquery.com/jquery-3.7.0.js"></script>
+  <script src="https://cdn.datatables.net/1.13.7/js/jquery.dataTables.min.js"></script>
+  <script>
+    new DataTable('#example');
+  </script>
 </body>
 
 </html>

@@ -4,72 +4,62 @@ include('../../setup/koneksi.php');
 
 if (isset($_POST['simpan'])) {
     // Validasi kolom lainnya dan tangani kesalahan jika diperlukan.
-    $kd_biodata = $_POST['kd_biodata'];
+    $kd_kegiatan = $_POST['kd_kegiatan'];
     $id_pengguna = $_SESSION['id_pengguna']; 
-    $nama = $_POST['nama'];
-    $nik = $_POST['nik'];
-    $agama = $_POST['agama'];
-    $kewarganegaraan = $_POST['kewarganegaraan'];
-    $jk = $_POST['jk'];
-    $tempat_lahir = $_POST['tempat_lahir'];
-    $tanggal_lahir = $_POST['tanggal_lahir'];
-    $status_perkawinan = $_POST['status_perkawinan'];
-    $alamat = $_POST['alamat'];
-    $no_telp = $_POST['no_telp'];
-    $pekerjaan = $_POST['pekerjaan'];
-    $nama_kantor = $_POST['nama_kantor'];
-    $alamat_kantor = $_POST['alamat_kantor'];
-    $jabatan = $_POST['jabatan'];
-    $eks_boleh = array('jpg', 'jpeg','png');
-    $foto = $_FILES['foto']['name'];
-    $x = explode('.', $foto);
+    $deskripsi = $_POST['deskripsi'];
+    $tgl_kegiatan = $_POST['tgl_kegiatan'];
+    $lokasi = $_POST['lokasi'];
+    $current_time = date('Y-m-d H:i:s');
+
+    $eks_boleh = array('pdf', 'doc', 'docx');
+    $file = $_FILES['file']['name'];
+    $x = explode('.', $file);
     $ekstensi = strtolower(end($x));
-    $ukuran = $_FILES['foto']['size'];
-    $file_temp = $_FILES['foto']['tmp_name'];
+    $ukuran = $_FILES['file']['size'];
+    $file_temp = $_FILES['file']['tmp_name'];
 
     // Validasi apakah semua data terisi
-    if (empty($kd_biodata) || empty($id_pengguna) || empty($nama) || empty($nik) || empty($agama) || empty($kewarganegaraan) || empty($jk) ||
-        empty($tempat_lahir) || empty($tanggal_lahir) || empty($status_perkawinan) || empty($alamat) || empty($no_telp) ||
-        empty($pekerjaan) || empty($nama_kantor) || empty($alamat_kantor) || empty($jabatan) || empty($foto)) {
-
+    if (empty($kd_kegiatan) || empty($id_pengguna) || empty($deskripsi) || empty($tgl_kegiatan) || empty($lokasi) || empty($file)) {
         echo "<script>
             alert('Semua data harus diisi!');
-            window.location.href='../../pages/forms/tambah_biodata.php';
+            window.location.href='tambah_kegiatan.php';
         </script>";
-    // } else {
-    //     // Check apakah jabatan sudah terisi
-    //     $check_query = "SELECT COUNT(*) AS count FROM tb_biodata WHERE jabatan = '$jabatan'";
-    //     $check_result = mysqli_query($koneksi, $check_query);
-    //     $check_data = mysqli_fetch_assoc($check_result);
+    } else {
+        // Periksa apakah file yang diunggah memiliki ekstensi yang diizinkan
+        if (in_array($ekstensi, $eks_boleh)) {
+            // Tentukan lokasi tujuan untuk menyimpan file
+            $tujuan_upload = "../../../images/kegiatan/" . $file;
 
-    //     if ($check_data['count'] > 0) {
-    //         echo "<script>
-    //             alert('Posisi Jabatan sudah terisi');
-    //             window.location.href='../../pages/forms/tambah_biodata.php';
-    //         </script>";
-        } else {
-            // Masukkan data ke tb_biodata
-            $input = "INSERT INTO tb_biodata (kd_biodata,id_pengguna, nama, nik, agama, kewarganegaraan, jk, tempat_lahir, tanggal_lahir,
-                status_perkawinan, alamat, no_telp, pekerjaan, nama_kantor, alamat_kantor, jabatan, foto) VALUES 
-                ('$kd_biodata', '$id_pengguna', '$nama', '$nik', '$agama', '$kewarganegaraan', '$jk', '$tempat_lahir', '$tanggal_lahir',
-                '$status_perkawinan', '$alamat', '$no_telp', '$pekerjaan', '$nama_kantor', '$alamat_kantor',
-                '$jabatan', '$foto')";
-            
+            // Masukkan data ke tb_kegiatan
+            $input = "INSERT INTO tb_kegiatan (kd_kegiatan, id_pengguna, deskripsi, tgl_kegiatan, lokasi, file, status, tgl_ajuan) VALUES 
+                ('$kd_kegiatan', '$id_pengguna', '$deskripsi', '$tgl_kegiatan', '$lokasi', '$file','terkirim','$current_time')";
+
             if (mysqli_query($koneksi, $input)) {
                 // Unggah file
-                move_uploaded_file($file_temp, "../../../images/biodata/" . $foto);
-
-                echo "<script>
-                    alert('Data anda berhasil dikirim!');
-                    window.location.href='../../pages/forms/biodata.php';
-                </script>";
+                if (move_uploaded_file($file_temp, $tujuan_upload)) {
+                    echo "<script>
+                        alert('Data anda berhasil dikirim!');
+                        window.location.href='rencana.php';
+                    </script>";
+                } else {
+                    echo "<script>
+                        alert('Gagal mengunggah file!');
+                        window.location.href='tambah_kegiatan.php';
+                    </script>";
+                }
             } else {
                 echo "Error: " . $input . "<br>" . mysqli_error($koneksi);
             }
+        } else {
+            echo "<script>
+                alert('Ekstensi file tidak diizinkan (hanya pdf, doc, dan docx)!');
+                window.location.href='tambah_kegiatan.php';
+            </script>";
         }
     }
-
+}
 ?>
+
 
 
 
@@ -233,121 +223,34 @@ if (isset($_POST['simpan'])) {
               <div class="card">
                 <div class="card-body">
                 <?php
-                      $auto = mysqli_query($koneksi, "Select max(kd_biodata) as max_code from tb_biodata");
+                      $auto = mysqli_query($koneksi, "Select max(kd_kegiatan) as max_code from tb_kegiatan");
                       $isi = mysqli_fetch_array($auto);
                       $kode = $isi['max_code'];
                       $urutan = (int)substr($kode, 1, 2);
                       $urutan++;
-                      $huruf = "B";
-                      $kd_biodata = $huruf . sprintf("%02s", $urutan);
+                      $huruf = "K";
+                      $kd_kegiatan = $huruf . sprintf("%02s", $urutan);
                     ?>
                      <!-- Formulir HTML disini -->
                     <form class="forms-sample" action="" method="POST" id="form-ketua" enctype="multipart/form-data">
-                    <input type="hidden" name="kd_biodata" value="<?php echo $kd_biodata; ?>">
+                    <input type="hidden" name="kd_kegiatan" value="<?php echo $kd_kegiatan; ?>">
                         <div class="form-group">
-                            <label>Nama Lengkap</label>
-                            <input type="text" class="form-control" name="nama" autocomplete="off">
+                            <label>Deskripsi Kegiatan</label>
+                            <input type="text" class="form-control" name="deskripsi" autocomplete="off">
                         </div>
                     <div class="form-group">
-                      <label >NIK</label>
-                      <input type="number" class="form-control" name="nik"   autocomplete="off">
+                      <label >Tanggal Kegiatan</label>
+                      <input type="date" class="form-control" name="tgl_kegiatan"   autocomplete="off">
                     </div>
 
                     <div class="form-group">
-                      <label >Agama</label>
-                      <select class="form-control" name="agama" >
-                      <option>---Silahkan Pilih---</option>
-                          <option>Islam</option>
-                          <option>Kristen</option>
-                          <option>Budha</option>
-                          <option>Hindu</option>
-                          <option>Konghucu</option>
-                          <option>Katolik</option>
-                      <select>
-                    </div> 
-
-                    <div class="form-group">
-                      <label >Kewarganegaraan</label>
-                      <select class="form-control" name="kewarganegaraan" >
-                      <option>---Silahkan Pilih---</option>
-                          <option>WNI</option>
-                          <option>WNA</option>
-                        </select>
-                    </div> 
-
-                    <div class="form-group">
-                      <label>Jenis Kelamin</label>
-                      <div class="form-check">
-                          <label class="form-check-label">
-                              <input type="radio" class="form-check-input" name="jk" value="Laki-laki" checked>
-                              Laki-laki
-                          </label>
-                      </div>
-                      <div class="form-check">
-                          <label class="form-check-label">
-                              <input type="radio" class="form-check-input" name="jk" value="Perempuan">
-                              Perempuan
-                          </label>
-                      </div>
-                  </div>
-
-                    <div class="form-group">
-                      <label >Tempat Lahir</label>
-                      <input type="text" class="form-control" name="tempat_lahir" autocomplete="off">
-                    </div> 
-                    
-                    <div class="form-group">
-                      <label >Tanggal Lahir</label>
-                      <input type="date" class="form-control" name="tanggal_lahir" autocomplete="off">
+                      <label >Lokasi Kegiatan</label>
+                      <input type="text" class="form-control" name="lokasi"   autocomplete="off">
                     </div>
 
                     <div class="form-group">
-                      <label >Status Perkawinan</label>
-                      <select class="form-control" name="status_perkawinan" >
-                      <option>---Silahkan Pilih---</option>
-                          <option>Sudah</option>
-                          <option>Belum</option>
-                          <option>Cerai</option>
-                      <select>
-                    </div> 
-
-                    <div class="form-group">
-                      <label >Alamat</label>
-                      <input type="alamat" class="form-control" name="alamat"  autocomplete="off">
-                    </div>
-
-                    <div class="form-group">
-                      <label >No Hp.</label>
-                      <input type="number" class="form-control" name="no_telp"  autocomplete="off">
-                    </div>
-
-                    <div class="form-group">
-                      <label >Pekerjaan</label>
-                      <input type="text" class="form-control" name="pekerjaan"  autocomplete="off">
-                    </div>
-
-                    <div class="form-group">
-                      <label >Nama Kantor</label>
-                      <input type="text" class="form-control" name="nama_kantor" autocomplete="off">
-                    </div>
-
-                    <div class="form-group">
-                      <label >Alamat Kantor</label>
-                      <input type="text" class="form-control" name="alamat_kantor"  autocomplete="off">
-                    </div>
-                    <div class="form-group">
-                      <label >Jabatan</label>
-                      <select class="form-control" name="jabatan" >
-                      <option>---Silahkan Pilih---</option>
-                          <option>Ketua</option>
-                          <option>Sekretaris</option>
-                          <option>Bendahara</option>
-                      <select>
-                    </div> 
-
-                    <div class="form-group">
-                      <label>Unggah Berkas</label>
-                      <input type="file" name="foto" class="file-upload-default">
+                      <label>Surat Izin</label>
+                      <input type="file" name="file" class="file-upload-default">
                       <div class="input-group col-xs-12">
                         <input type="text" class="form-control file-upload-info" >
                         <span class="input-group-append mx-2" >
@@ -372,7 +275,7 @@ if (isset($_POST['simpan'])) {
         <!-- partial:../../partials/_footer.html -->
         <footer class="footer">
           <div class="d-sm-flex justify-content-center justify-content-sm-between">
-            <span class="float-none float-sm-right d-block mt-1 mt-sm-0 text-center">Copyright © 2023. Bakesbangpol Kab. Rembang.</span>
+            <span class="float-none float-sm-right d-block mt-1 mt-sm-0 text-center">Copyright © 2024. Bakesbangpol Kab. Rembang.</span>
           </div>
         </footer>
         <!-- partial -->

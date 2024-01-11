@@ -1,8 +1,8 @@
 
 <?php
 session_start();
-    include('../../setup/koneksi.php');
-    
+include('../../setup/koneksi.php');
+
 ?>
 
 <!DOCTYPE html>
@@ -11,8 +11,8 @@ session_start();
 <head>
   <!-- Required meta tags -->
   <meta charset="utf-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>SiOrang</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+  <title>SiOrang </title>
   <!-- plugins:css -->
   <link rel="stylesheet" href="../../vendors/feather/feather.css">
   <link rel="stylesheet" href="../../vendors/mdi/css/materialdesignicons.min.css">
@@ -22,18 +22,14 @@ session_start();
   <link rel="stylesheet" href="../../vendors/css/vendor.bundle.base.css">
   <!-- endinject -->
   <!-- Plugin css for this page -->
+  <link rel="stylesheet" href="../../vendors/select2/select2.min.css">
+  <link rel="stylesheet" href="../../vendors/select2-bootstrap-theme/select2-bootstrap.min.css">
   <!-- End plugin css for this page -->
   <!-- inject:css -->
   <link rel="stylesheet" href="../../css/vertical-layout-light/style.css">
   <!-- endinject -->
   <link rel="shortcut icon" href="../../images/favicon.png" />
   <link rel="stylesheet" href="https://cdn.datatables.net/1.13.7/css/jquery.dataTables.min.css">
-  <!-- CSS PRINT -->
-  <!-- <link rel="stylesheet" href="https://cdn.datatables.net/1.13.7/css/jquery.dataTables.min.css">
-  <link rel="stylesheet" href="https://cdn.datatables.net/buttons/2.4.2/css/buttons.dataTables.min.css"> -->
-
-
-
 </head>
 
 <body>
@@ -59,7 +55,7 @@ session_start();
         <ul class="navbar-nav">
           <li class="nav-item font-weight-semibold d-none d-lg-block ms-0">
           <h1 class="welcome-text">Selamat Datang <span class="text-black fw-bold"><?php echo $_SESSION['nama'];?></span></h1>
-          </li>
+            </li>
         </ul>
         
         <button class="navbar-toggler navbar-toggler-right d-lg-none align-self-center" type="button" data-bs-toggle="offcanvas">
@@ -88,10 +84,10 @@ session_start();
           </div>
         </div>
       </div>
-     
+    
       <!-- partial -->
       <!-- partial:../../partials/_sidebar.html -->
-     <nav class="sidebar sidebar-offcanvas" id="sidebar">
+      <nav class="sidebar sidebar-offcanvas" id="sidebar">
         <ul class="nav">
           <li class="nav-item">
             <a class="nav-link" href="../../index.php">
@@ -189,116 +185,136 @@ session_start();
                 
             </a>
           </li>
-			</ul>
+          
+        </ul>
       </nav>
       <!-- partial -->
-      <div class="main-panel">
+      <div class="main-panel">        
         <div class="content-wrapper">
-          <div class="row">   
-            <div class="col-lg-12 grid-margin stretch-card">
+          <div class="row">
+            <div class="col-12 grid-margin stretch-card">
               <div class="card">
-                <div class="card-header mt-3 bg-white">
-                  <h4 class="card-title">Balasan Ormas</h4>
-                </div>
                 <div class="card-body">
-                  <div class="table-responsive">
-                    <table id="example" class="table table-striped" style="width:100%">
-                      <thead>
-                        <tr>
-                              <th>No.</th>
-                              <th>Nama Pengadu</th>
-                              <th>Nomor Hp</th>
-                              <th>Alamat</th>
-                              <th>Jenis Pengaduan</th>
-                              <th>Isi</th>
-                              <th>Status</th>
-                              <th>Tanggapan</th>
-                              <th>Aksi</th>
-                             </tr>
+                <a href="tambah_biodata.php" class="btn btn-primary btn-sm text-white mb-0 me-0" type="button">
+                    <i class="mdi mdi-account-plus"></i>Tambah Data</a>
+                    <br>
+                <div class="table-responsive">
+                    <table id="example" class="table table-striped">
+                    <thead>
+                                    <tr>
+                                        <th>No</th>
+                                        <th>Nama Organisasi</th>
+                                        <th>Nama Lengkap</th>
+                                        <th>NIK</th>
+                                        <th>Jenis Kelamin</th>
+                                        <th>TTL</th>
+                                        <th>Jabatan</th>
+                                        <th>Aksi</th>
+                                    </tr>
                       </thead>
                       <tbody>
-                        <?php 
+                      <?php 
                             $no = 1;
-                            $tampil ="SELECT * FROM tb_pengaduan
-                            WHERE status = 'validasi ormas' ";
-                            $result = mysqli_query($koneksi,$tampil);
-                            while ($data = mysqli_fetch_array($result)){
-                        ?>
-                        <tr>
-                            <td><?= $no++ ?></td>
-                            <td><?= $data['nama'] ?></td>
-                            <td><?= $data['no_hp'] ?></td>
-                            <td><?= $data['alamat'] ?></td>
-                            <td><?= $data['jenis_pengaduan'] ?></td>
-                            <td><?= $data['isi'] ?></td>
-                            <td><?= $data['status'] ?></td>
-                            <td><?= $data['tanggapan']?></td>
-                            <?php 
-                                if ($data['status'] == 'validasi ormas') {
-                              ?>
-                            <td>
-                                <form action="balasan_ormas.php" method="POST">
-                                  <input type="hidden" name="kd_pengaduan" value="<?= $data['kd_pengaduan']; ?>"/>
-                                  <input type="submit" class="btn btn-primary btn-sm" name="selesai" value="Selesai" />
-                                  <input type="submit" class="btn btn-success btn-sm" name="kirim" value="Kirim" />
-                                </form>
-                            </td>
-                            <?php
-                                }else if($data['status'] == 'selesai'){
-                              ?>
-                              <td>Selesai</td>
-                              <?php
-                              }elseif ($data['status'] == 'kirim') {
-                            ?>
-                                <td>Tindak Lanjut</td>
-                            <?php
-                              }
-                              ?>
+                            $id_pengguna = $_SESSION['id_pengguna'];
+                            $tampil = mysqli_query($koneksi, "SELECT tb_pengguna.nama as nama_pengguna, tb_biodata.jk as jk, tb_biodata.nama_kantor as nama_kantor,
+                            tb_biodata.pekerjaan as pekerjaan,tb_biodata.nama as nama, tb_biodata.nik as nik, tb_biodata.tempat_lahir as tempat_lahir,tb_biodata.kewarganegaraan as kewarganegaraan,tb_biodata.tanggal_lahir as tanggal_lahir, 
+                            tb_biodata.id_pengguna as id_pengguna, tb_biodata.kd_biodata as kd_biodata,tb_biodata.alamat as alamat, tb_biodata.alamat_kantor as alamat_kantor, tb_biodata.foto as foto,
+                            tb_biodata.no_telp as no_telp, tb_biodata.agama as agama,tb_biodata.status_perkawinan as status_perkawinan, tb_biodata.jabatan as jabatan from tb_biodata INNER JOIN tb_pengguna ON tb_pengguna.id_pengguna = tb_biodata.id_pengguna ORDER BY kd_biodata");
                             
+
+                             while ($data = mysqli_fetch_array($tampil)){
+                            ?>
+                            <tr>
+                                        <td><?= $no++ ?></td>
+                                        <td><?= $data['nama_pengguna'] ?></td>
+                                        <td><?= $data['nama'] ?></td>
+                                        <td><?= $data['nik'] ?></td>
+                                        <td><?= $data['jk'] ?></td>
+                                        <td><?= $data['tempat_lahir'] . ' ' . $data['tanggal_lahir'] ?></td>
+                                        <td><?= $data['jabatan'] ?></td>
+                                        <td>
+                                            <button type="button" class="btn btn-warning btn-lg" data-bs-toggle="modal" data-bs-target="#exampleModal<?= $data['kd_biodata'] ?>">
+                                                Detail
+                                            </button>
+                                            <!-- <a href='edit_biodata.php?update=<?= $data['kd_biodata'] ?>' class="btn btn-primary btn-lg">Edit</a>
+                                            <a href="?hapus=<?= $data['kd_biodata'] ?>" onclick="return confirm('Apakah anda yakin ingin menghapus data ini?');" class="btn btn-danger btn-lg">Hapus</a> -->
+                                        </td>
+                                    </tr>
+                                    <div class="modal fade" id="exampleModal<?= $data['kd_biodata'] ?>" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
+                                        <div class="modal-dialog modal-l">
+                                            <div class="modal-content">
+                                                <div class="modal-header">
+                                                    <h5 class="modal-title" id="detailModalLabel">Detail Informasi Biodata</h5>
+                                                    <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                                                        <span aria-hidden="true">&times;</span>
+                                                    </button>
+                                                </div>
+                                                <div class="modal-body">
+                                                    <div class="text-center">
+                                                        <?php
+                                                        if (!empty($data['foto'])) {
+                                                            echo '<img src="../../../images/biodata/' . $data['foto'] . '" alt="" class="img-fluid " style="max-height: 200px; max-width: 200px;">';
+                                                        }
+                                                        ?>
+                                                    </div>
+                                                    <div class="mt-3">
+                                                        <h5 class="text-center"><b><?= $data['jabatan'] ?></b></h5>
+                                                        <div class="row">
+                                                            <div class="col-md-6">
+                                                                <p><strong>Agama:</strong> <?= $data['agama'] ?></p>
+                                                                <p><strong>Kewarganegaraan:</strong> <?= $data['kewarganegaraan'] ?></p>
+                                                                <p><strong>Status Perkawinan:</strong> <?= $data['status_perkawinan'] ?></p>
+                                                                <p><strong>Alamat:</strong> <?= $data['alamat'] ?></p>
+                                                             </div>
+                                                            <div class="col-md-6">
+                                                                <p><strong>Pekerjaan:</strong> <?= $data['pekerjaan'] ?></p>
+                                                                <p><strong>Nama Kantor:</strong> <?= $data['nama_kantor'] ?></p>
+                                                                <p><strong>Alamat Kantor:</strong> <?= $data['alamat_kantor'] ?></p>
+                                                            </div>
+                                                        </div>
+                                                        <!-- Tambahkan informasi lainnya sesuai kebutuhan -->
+                                                    </div>
+                                                </div>
+
+                                                <div class="modal-footer">
+                                                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+                                                  </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <!-- End Modal -->
+                                    <?php } ?> 
+                                </tbody>
+                            </table>
                         </div>
                     </div>
-                    </tr>
-                        <?php } ?>
-                      </tbody>
-                    </table>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
                     <?php
-                      if(isset($_POST['selesai'])){
-                        $kd_pengaduan = $_POST['kd_pengaduan'];
+                      if(isset($_GET['hapus'])){
+                        mysqli_query($koneksi, "Delete from tb_biodata where kd_biodata='$_GET[hapus]' ") or die (mysqli_error($koneksi));
 
-                        $select = "UPDATE tb_pengaduan SET status ='selesai' WHERE kd_pengaduan = '$kd_pengaduan' ";
-                        $result = mysqli_query($koneksi,$select);
                         echo "<script>
-                        document.location='../../pages/forms/balasan_ormas.php';
-                       </script>";
-                      }
-                      if(isset($_POST['kirim'])){
-                        $kd_pengaduan = $_POST['kd_pengaduan'];
-
-                        $select = "UPDATE tb_pengaduan SET status ='tindak lanjut' WHERE kd_pengaduan = '$kd_pengaduan' ";
-                        $result = mysqli_query($koneksi,$select);
-                        echo "<script>
-                        alert('Berhasil Dikirim !');
-                        document.location='../../pages/forms/balasan_ormas.php';
-                       </script>";
+                            document.location='../../pages/forms/biodata.php';
+                            </script>";
+                        echo "<meta http-equiv=refrsh content=2;URL='biodata.php'>";
                       }
                     ?>
-                
-                            </div>
-                          </div>
-                        </div>
-                      </div>
-                      </div>   
-                  </div>
-                </div>
-              </div>
+
+                <div>
             </div>
-			</div>
+          </div>
         </div>
+      </div>
         <!-- content-wrapper ends -->
         <!-- partial:../../partials/_footer.html -->
         <footer class="footer">
-          <div class="">
-            <span align="center">Copyright © 2023. Bakesbangpol Kab. Rembang.</span>
+          <div class="d-sm-flex justify-content-center justify-content-sm-between">
+            <span class="float-none float-sm-right d-block mt-1 mt-sm-0 text-center">Copyright © 2023. Bakesbangpol Kab. Rembang.</span>
           </div>
         </footer>
         <!-- partial -->
@@ -312,6 +328,8 @@ session_start();
   <script src="../../vendors/js/vendor.bundle.base.js"></script>
   <!-- endinject -->
   <!-- Plugin js for this page -->
+  <script src="../../vendors/typeahead.js/typeahead.bundle.min.js"></script>
+  <script src="../../vendors/select2/select2.min.js"></script>
   <script src="../../vendors/bootstrap-datepicker/bootstrap-datepicker.min.js"></script>
   <!-- End plugin js for this page -->
   <!-- inject:js -->
@@ -322,52 +340,16 @@ session_start();
   <script src="../../js/todolist.js"></script>
   <!-- endinject -->
   <!-- Custom js for this page-->
+  <script src="../../js/file-upload.js"></script>
+  <script src="../../js/typeahead.js"></script>
+  <script src="../../js/select2.js"></script>
   <!-- End custom js for this page-->
   <script src="https://code.jquery.com/jquery-3.7.0.js"></script>
   <script src="https://cdn.datatables.net/1.13.7/js/jquery.dataTables.min.js"></script>
   <script>
     new DataTable('#example');
   </script>
-
-  <!--jquery print--->
-  <!-- <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
-<script src="https://cdn.datatables.net/1.13.7/js/jquery.dataTables.min.js"></script>
-<script src="https://cdn.datatables.net/buttons/2.4.2/js/dataTables.buttons.min.js"></script>
-<script src="https://cdnjs.cloudflare.com/ajax/libs/jszip/3.10.1/jszip.min.js"></script>
-<script src="https://cdnjs.cloudflare.com/ajax/libs/pdfmake/0.1.53/pdfmake.min.js"></script>
-<script src="https://cdnjs.cloudflare.com/ajax/libs/pdfmake/0.1.53/vfs_fonts.js"></script>
-<script src="https://cdn.datatables.net/buttons/2.4.2/js/buttons.html5.min.js"></script>
-<script src="https://cdn.datatables.net/buttons/2.4.2/js/buttons.print.min.js"></script> -->
-
-<!-- <script>
-$(document).ready(function() {
-    $('#example').DataTable( {
-        dom: 'Bfrtip',
-        buttons: [
-            {
-                extend: 'copy',
-                title: 'Data Copy'
-            },
-            {
-                extend: 'csv',
-                title: 'Data CSV'
-            },
-            {
-                extend: 'excel',
-                title: 'Data Excel'
-            },
-            {
-                extend: 'pdf',
-                title: 'Data PDF'
-            },
-            {
-                extend: 'print',
-                title: 'Data Print'
-            }
-        ]
-    } );
-} );
-</script> -->
+ 
 
 </body>
 

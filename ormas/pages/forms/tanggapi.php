@@ -53,7 +53,6 @@ session_start();
         <ul class="navbar-nav">
           <li class="nav-item font-weight-semibold d-none d-lg-block ms-0">
           <h1 class="welcome-text">Selamat Datang <span class="text-black fw-bold"><?php echo $_SESSION['nama'];?></span></h1>
-            
           </li>
         </ul>
         <ul class="navbar-nav ms-auto">
@@ -114,58 +113,38 @@ session_start();
           <li class="nav-item">
             <a class="nav-link" data-bs-toggle="collapse" href="#form-elements" aria-expanded="false" aria-controls="form-elements">
               <i class="menu-icon mdi mdi-card-text-outline"></i>
-              <span class="menu-title">Input Data</span>
+              <span class="menu-title">Pemberkasan</span>
               <i class="menu-arrow"></i>
             </a>
             <div class="collapse" id="form-elements">
-            <ul class="nav flex-column sub-menu">
-                <li class="nav-item"><a class="nav-link" href="../../pages/forms/input_pendaftaran.php">Form Pendaftaran</a></li>
+              <ul class="nav flex-column sub-menu">
+                <li class="nav-item"><a class="nav-link" href="biodata.php">Biodata Pengurus</a></li>
               </ul>
               <ul class="nav flex-column sub-menu">
-                <li class="nav-item"><a class="nav-link" href="../../pages/forms/input_publikasi.php">Form Publikasi</a></li>
+                <li class="nav-item"><a class="nav-link" href="file.php">File</a></li>
               </ul>
-              <ul class="nav flex-column sub-menu">
-                <li class="nav-item"><a class="nav-link" href="../../pages/forms/input_berkas.php">Form Berkas</a></li>
-              </ul>
-              <ul class="nav flex-column sub-menu">
-                <li class="nav-item"><a class="nav-link" href="../../pages/forms/input_pengguna.php">Pengguna Baru</a></li>
-              </ul>
-            </div>
+              </div>
           </li>
           
           <li class="nav-item">
             <a class="nav-link" data-bs-toggle="collapse" href="#tables" aria-expanded="false" aria-controls="tables">
               <i class="menu-icon mdi mdi-table"></i>
-              <span class="menu-title" >Data Pendaftaran</span>
+              <span class="menu-title" >Jadwal Kegiatan</span>
               <i class="menu-arrow"></i>
             </a>
             <div class="collapse" id="tables">
               <ul class="nav flex-column sub-menu">
-                <li class="nav-item"> <a class="nav-link" href="../../pages/tables/data_pendaftaran.php">Data Ormas Baru</a></li>
+                <li class="nav-item"> <a class="nav-link" href="rencana.php">Rencana</a></li>
               </ul>
             </div>
-            
             <div class="collapse" id="tables">
               <ul class="nav flex-column sub-menu">
-                <li class="nav-item"> <a class="nav-link" href="../../pages/tables/tambah_akunormas.php">Akun Baru Ormas</a></li>
+                <li class="nav-item"> <a class="nav-link" href="terlaksana.php">Terlaksana</a></li>
               </ul>
             </div>
-          </li>
-          
-          <li class="nav-item">
-            <a class="nav-link" data-bs-toggle="collapse" href="#tables" aria-expanded="false" aria-controls="tables">
-              <i class="menu-icon mdi mdi-table"></i>
-              <span class="menu-title" >Data Aspirasi</span>
-              <i class="menu-arrow"></i>
-            </a>
-             <div class="collapse" id="tables">
-              <ul class="nav flex-column sub-menu">
-                <li class="nav-item"> <a class="nav-link" href="../../pages/tables/data_aspirasi.php">Data Aspirasi</a></li>
-              </ul>
-            </div>
-          </li>
-			
-          <li class="nav-item">
+            </li>
+
+            <li class="nav-item">
             <a class="nav-link" data-bs-toggle="collapse" href="#icons" aria-expanded="false" aria-controls="form-elements">
               <i class="menu-icon mdi mdi mdi-access-point"></i>
               <span class="menu-title">Pengaduan</span>
@@ -173,12 +152,20 @@ session_start();
             </a>
             <div class="collapse" id="icons">
               <ul class="nav flex-column sub-menu">
-                <li class="nav-item"> <a class="nav-link" href="../../pages/forms/tanggapi.php">Tanggapi</a></li>
+                <li class="nav-item"> <a class="nav-link" href="tanggapi.php">Tanggapi</a></li>
               </ul>
 			       <ul class="nav flex-column sub-menu">
-                <li class="nav-item"> <a class="nav-link" href="../../pages/forms/laporan.php">Laporan</a></li>
+                <li class="nav-item"> <a class="nav-link" href="laporan.php">Laporan Selesai</a></li>
               </ul>
             </div>
+          </li>
+
+          <li class="nav-item">
+            <a class="nav-link" href="../../../logout.php">
+                <i class="menu-icon mdi mdi-account-circle-outline"></i>
+                <span class="menu-title">Keluar</span>
+                
+            </a>
           </li>
 			</ul>
       </nav>
@@ -199,30 +186,29 @@ session_start();
                             <th>No.</th>
                               <th>Jenis Pengaduan</th>
                               <th>Isi</th>
-                              <th>Bukti</th>
                               <th>Tanggal Pengaduan</th>
-                              <th>Status</th>
                               <th>Aksi</th>
                              </tr>
                       </thead>
                       <tbody>
                         <?php 
                             $no = 1;
-                            $tampil ="SELECT * FROM tb_pengaduan
-                            WHERE status = 'dikirim ke ormas' ";
-                            $result = mysqli_query($koneksi,$tampil);
-                            while ($data = mysqli_fetch_array($result)){
+                            $id_pengguna = $_SESSION['id_pengguna'];
+
+                            $tampil = mysqli_query($koneksi, "SELECT tb_pengguna.id_pengguna as id_pengguna, tb_pengaduan.kd_pengaduan as kd_pengaduan,
+                            tb_pengaduan.jenis_pengaduan as jenis_pengaduan, tb_pengaduan.nama as nama, tb_pengaduan.status as status, tb_pengaduan.file as file,
+                            tb_pengaduan.isi as isi, tb_pengaduan.tgl_aduan as tgl_aduan from tb_pengaduan INNER JOIN tb_pengguna ON 
+                            tb_pengguna.id_pengguna = tb_pengaduan.kd_pengaduan where tb_pengaduan.id_pengguna = '$id_pengguna'
+                            and status = 'dikirim ke ormas'
+                            ");
+
+                            while ($data = mysqli_fetch_array($tampil)){
                         ?>
                         <tr>
                             <td><?= $no++ ?></td>
                             <td><?= $data['jenis_pengaduan'] ?></td>
                             <td><?= $data['isi'] ?></td>
-                            <td>
-                            <img  src ="../../../images/bukti_pengaduan/<?= $data['file']?>" style="width:100px; height:100px;">
-                            
-                            </td>
                             <td><?= $data['tgl_aduan'] ?></td>
-                            <td><?= $data['status'] ?></td>
                             <td>
                               <button type="button" class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#staticBackdrop<?= $data['kd_pengaduan']; ?>">
                                 Tanggapi

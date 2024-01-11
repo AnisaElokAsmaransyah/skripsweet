@@ -124,21 +124,18 @@ session_start();
               <i class="menu-arrow"></i>
             </a>
             <div class="collapse" id="form-elements">
-            <ul class="nav flex-column sub-menu">
-                <li class="nav-item"><a class="nav-link" href="../../pages/forms/input_pendaftaran.php">Form Pendaftaran</a></li>
+              <ul class="nav flex-column sub-menu">
+                <li class="nav-item"><a class="nav-link" href="input_pendaftaran.php">Pendaftaran</a></li>
               </ul>
               <ul class="nav flex-column sub-menu">
-                <li class="nav-item"><a class="nav-link" href="../../pages/forms/input_publikasi.php">Form Publikasi</a></li>
+                <li class="nav-item"><a class="nav-link" href="input_publikasi.php">Publikasi</a></li>
               </ul>
               <ul class="nav flex-column sub-menu">
-                <li class="nav-item"><a class="nav-link" href="../../pages/forms/input_berkas.php">Form Berkas</a></li>
-              </ul>
-              <ul class="nav flex-column sub-menu">
-                <li class="nav-item"><a class="nav-link" href="../../pages/forms/input_pengguna.php">Pengguna Baru</a></li>
+                <li class="nav-item"><a class="nav-link" href="input_pengguna.php">Pengguna Baru</a></li>
               </ul>
             </div>
           </li>
-          
+
           <li class="nav-item">
             <a class="nav-link" data-bs-toggle="collapse" href="#tables" aria-expanded="false" aria-controls="tables">
               <i class="menu-icon mdi mdi-table"></i>
@@ -147,13 +144,25 @@ session_start();
             </a>
             <div class="collapse" id="tables">
               <ul class="nav flex-column sub-menu">
-                <li class="nav-item"> <a class="nav-link" href="../../pages/tables/data_pendaftaran.php">Data Ormas Baru</a></li>
+                <li class="nav-item"> <a class="nav-link" href="data_pendaftaran.php">Data Ormas Baru</a></li>
               </ul>
             </div>
             
             <div class="collapse" id="tables">
               <ul class="nav flex-column sub-menu">
-                <li class="nav-item"> <a class="nav-link" href="../../pages/tables/tambah_akunormas.php">Akun Baru Ormas</a></li>
+                <li class="nav-item"> <a class="nav-link" href="tambah_akunormas.php">Akun Baru Ormas</a></li>
+              </ul>
+            </div>
+
+            <div class="collapse" id="tables">
+              <ul class="nav flex-column sub-menu">
+                <li class="nav-item"> <a class="nav-link" href="biodata.php">Biodata Ormas</a></li>
+              </ul>
+            </div>
+
+            <div class="collapse" id="tables">
+              <ul class="nav flex-column sub-menu">
+                <li class="nav-item"> <a class="nav-link" href="input_berkas.php">Berkas</a></li>
               </ul>
             </div>
           </li>
@@ -166,7 +175,7 @@ session_start();
             </a>
              <div class="collapse" id="tables">
               <ul class="nav flex-column sub-menu">
-                <li class="nav-item"> <a class="nav-link" href="../../pages/tables/data_aspirasi.php">Data Aspirasi</a></li>
+                <li class="nav-item"> <a class="nav-link" href="data_aspirasi.php">Data Aspirasi</a></li>
               </ul>
             </div>
           </li>
@@ -179,15 +188,22 @@ session_start();
             </a>
             <div class="collapse" id="icons">
               <ul class="nav flex-column sub-menu">
-                <li class="nav-item"> <a class="nav-link" href="../../pages/forms/verifikasi.php">Verifikasi</a></li>
+                <li class="nav-item"> <a class="nav-link" href="verifikasi.php">Verifikasi</a></li>
               </ul>
               <ul class="nav flex-column sub-menu">
-                <li class="nav-item"> <a class="nav-link" href="../../pages/forms/tanggapi.php">Tanggapi</a></li>
+                <li class="nav-item"> <a class="nav-link" href="balasan_ormas.php">Balasan Ormas</a></li>
               </ul>
 			       <ul class="nav flex-column sub-menu">
-                <li class="nav-item"> <a class="nav-link" href="../../pages/forms/laporan.php">Aduan Selesai</a></li>
+                <li class="nav-item"> <a class="nav-link" href="laporan.php">Aduan Selesai</a></li>
               </ul>
             </div>
+          </li>
+          <li class="nav-item">
+            <a class="nav-link" href="../../../logout.php">
+                <i class="menu-icon mdi mdi-account-circle-outline"></i>
+                <span class="menu-title">Keluar</span>
+                
+            </a>
           </li>
 			</ul>
       </nav>
@@ -206,12 +222,8 @@ session_start();
                       <thead>
                         <tr>
                               <th>No.</th>
-                              <th>Nama Pengadu</th>
-                              <th>Nomor Hp</th>
-                              <th>Alamat</th>
                               <th>Jenis Pengaduan</th>
                               <th>Isi</th>
-                              <th>Status</th>
                               <th>Aksi</th>
                              </tr>
                       </thead>
@@ -225,13 +237,9 @@ session_start();
                         ?>
                         <tr>
                             <td><?= $no++ ?></td>
-                            <td><?= $data['nama'] ?></td>
-                            <td><?= $data['no_hp'] ?></td>
-                            <td><?= $data['alamat'] ?></td>
                             <td><?= $data['jenis_pengaduan'] ?></td>
                             <td><?= $data['isi'] ?></td>
-                           <td><?= $data['status'] ?></td>
-                              <td>
+                          <td>
                               <button type="button" class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#staticBackdrop<?= $data['kd_pengaduan']; ?>">
                                 Detail
                               </button>
@@ -268,18 +276,30 @@ session_start();
                                                         <?php
                                         if (!empty($data['file'])) {
                                             echo '<br>';
-                                            echo '<img src="../../pages/file/bukti_pengaduan/' . $data['file'] . '" alt="" height="210px" style="padding-top:10px">';
+                                            echo '<img src="../../../images/bukti_pengaduan/' . $data['file'] . '" alt="" height="210px" style="padding-top:10px">';
                                         }
                                         ?>
                                       <div align=left>
-                                        <?php
+                                      <?php
                                         if (!empty($data['tanggapan'])) {
                                             echo '<hr>';
                                             echo '<font size="1"><i>' . $data['tgl_tanggapan'] . '</i></font>';
                                             echo '<br>';
-                                            echo '<span class="response-label">Tanggapan : </span>' . $data['tanggapan'];
-                                        }
+                                            echo '<span class="response-label"><b>Tanggapan Ormas :</b> </span>' . $data['tanggapan'];
+                                        } 
                                         ?>
+                                        <div align=left>
+                                      <?php
+                                        if (!empty($data['tindakan'])) {
+                                            echo '<hr>';
+                                            echo '<font size="1"><i>' . $data['tgl_tindakan'] . '</i></font>';
+                                            echo '<br>';
+                                            echo '<span class="response-label"><b>Tindakan :</b> </span>' . $data['tindakan'];
+                                        } 
+                                        ?>
+
+
+
                                       
 
                               

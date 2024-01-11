@@ -102,19 +102,40 @@ session_start();
           
           <li class="nav-item nav-category">Fitur - fitur</li>
           <li class="nav-item">
+            <a class="nav-link" data-bs-toggle="collapse" href="#form-elements" aria-expanded="false" aria-controls="form-elements">
+              <i class="menu-icon mdi mdi-card-text-outline"></i>
+              <span class="menu-title">Pemberkasan</span>
+              <i class="menu-arrow"></i>
+            </a>
+            <div class="collapse" id="form-elements">
+              <ul class="nav flex-column sub-menu">
+                <li class="nav-item"><a class="nav-link" href="biodata.php">Biodata Pengurus</a></li>
+              </ul>
+              <ul class="nav flex-column sub-menu">
+                <li class="nav-item"><a class="nav-link" href="file.php">File</a></li>
+              </ul>
+              </div>
+          </li>
+          
+          <li class="nav-item">
             <a class="nav-link" data-bs-toggle="collapse" href="#tables" aria-expanded="false" aria-controls="tables">
               <i class="menu-icon mdi mdi-table"></i>
-              <span class="menu-title" >Data Pendaftaran</span>
+              <span class="menu-title" >Jadwal Kegiatan</span>
               <i class="menu-arrow"></i>
             </a>
             <div class="collapse" id="tables">
               <ul class="nav flex-column sub-menu">
-                <li class="nav-item"> <a class="nav-link" href="verifikasi_pendaftaran.php">Data Ormas Baru</a></li>
+                <li class="nav-item"> <a class="nav-link" href="rencana.php">Rencana</a></li>
               </ul>
             </div>
-         </li>
-         
-          <li class="nav-item">
+            <div class="collapse" id="tables">
+              <ul class="nav flex-column sub-menu">
+                <li class="nav-item"> <a class="nav-link" href="terlaksana.php">Terlaksana</a></li>
+              </ul>
+            </div>
+            </li>
+
+            <li class="nav-item">
             <a class="nav-link" data-bs-toggle="collapse" href="#icons" aria-expanded="false" aria-controls="form-elements">
               <i class="menu-icon mdi mdi mdi-access-point"></i>
               <span class="menu-title">Pengaduan</span>
@@ -122,14 +143,12 @@ session_start();
             </a>
             <div class="collapse" id="icons">
               <ul class="nav flex-column sub-menu">
-                <li class="nav-item"> <a class="nav-link" href="tindakan.php">Tindak Lanjut</a></li>
+                <li class="nav-item"> <a class="nav-link" href="tanggapi.php">Tanggapi</a></li>
               </ul>
-            </div>
-            <div class="collapse" id="icons">
-              <ul class="nav flex-column sub-menu">
+			       <ul class="nav flex-column sub-menu">
                 <li class="nav-item"> <a class="nav-link" href="laporan.php">Laporan Selesai</a></li>
               </ul>
-              </div>
+            </div>
           </li>
 
           <li class="nav-item">
@@ -156,11 +175,8 @@ session_start();
                       <thead>
                         <tr>
                               <th>No.</th>
-                              <th>Nama Pengadu</th>
-                              <th>Alamat</th>
                               <th>Jenis Pengaduan</th>
                               <th>Isi</th>
-                              <th>Status</th>
                               <th>Aksi</th>
                              </tr>
                       </thead>
@@ -174,12 +190,9 @@ session_start();
                         ?>
                         <tr>
                             <td><?= $no++ ?></td>
-                            <td><?= $data['nama'] ?></td>
-                            <td><?= $data['alamat'] ?></td>
                             <td><?= $data['jenis_pengaduan'] ?></td>
                             <td><?= $data['isi'] ?></td>
-                           <td><?= $data['status'] ?></td>
-                              <td>
+                           <td>
                               <button type="button" class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#staticBackdrop<?= $data['kd_pengaduan']; ?>">
                                 Detail
                               </button>
@@ -237,6 +250,7 @@ session_start();
                                             echo '<span class="response-label"><b>Tindakan :</b> </span>' . $data['tindakan'];
                                         } 
                                         ?>
+
 
 
                                       

@@ -1,10 +1,64 @@
-
 <?php
 session_start();
-  include('../../setup/koneksi.php');
+include('../../setup/koneksi.php');
 
-  ?>
+if (isset($_POST['edit'])) {
+    $kd_berkas = $_POST['kd_berkas'];
+    $id_pengguna = $_SESSION['id_pengguna'];
+    $judul = $_POST['judul'];
 
+    // Handle file upload
+    $uploadDir = "../../../images/berkas/";  // Ganti dengan path yang sesuai
+    $fileName = $_FILES['file']['name'];
+    $fileTempName = $_FILES['file']['tmp_name'];
+
+    // Cek apakah ada file yang diunggah
+    if (!empty($fileName)) {
+        // Cek apakah itu file dengan ekstensi yang diizinkan
+        $allowedExtensions = ['pdf', 'doc', 'docx'];  // Ekstensi yang diizinkan
+        $fileExtension = strtolower(pathinfo($fileName, PATHINFO_EXTENSION));
+
+        // Jika ekstensi file tidak sesuai, tampilkan pesan dan kembali ke halaman edit
+        if (!in_array($fileExtension, $allowedExtensions)) {
+            echo "<script>
+                  alert('Periksa ekstensi file anda.');
+                  window.location.href='edit_file.php?update=$kd_berkas';  // Perbarui halaman edit
+                 </script>";
+            exit(); // Pastikan skrip berhenti setelah menampilkan alert
+        }
+
+        // Pindahkan file yang diunggah ke direktori yang diinginkan
+        move_uploaded_file($fileTempName, $uploadDir . $fileName);
+        $filePath = $fileName;  // Gunakan file yang baru diunggah
+    } else {
+        // Jika tidak ada file yang diunggah, ambil file yang sudah ada sebelumnya
+        $queryGetFile = "SELECT file FROM tb_berkas WHERE kd_berkas = '$kd_berkas'";
+        $resultGetFile = mysqli_query($koneksi, $queryGetFile);
+        $rowGetFile = mysqli_fetch_assoc($resultGetFile);
+        $filePath = $rowGetFile['file'];
+    }
+
+    // Masukkan data ke tb_berkas termasuk kolom file
+    $query = "UPDATE tb_berkas SET 
+                id_pengguna = '$id_pengguna',
+                judul = '$judul',
+                file = '$filePath'
+            WHERE kd_berkas = '$kd_berkas'";
+
+    if (mysqli_query($koneksi, $query)) {
+        // Redirect setelah berhasil mengedit data
+        header("Location: file.php");
+        exit();
+    } else {
+        // Menampilkan pesan error dan kembali ke halaman edit
+        echo "<script>
+                  alert('Gagal menyimpan data. Periksa kembali data anda.');
+                  window.location.href='edit_file.php?update=$kd_berkas';  // Perbarui halaman edit
+                 </script>";
+        exit();
+    }
+}
+?>
 
 <!DOCTYPE html>
 <html lang="en">
@@ -30,7 +84,6 @@ session_start();
   <link rel="stylesheet" href="../../css/vertical-layout-light/style.css">
   <!-- endinject -->
   <link rel="shortcut icon" href="../../images/favicon.png" />
-  <link rel="stylesheet" href="https://cdn.datatables.net/1.13.7/css/jquery.dataTables.min.css">
 </head>
 
 <body>
@@ -56,24 +109,9 @@ session_start();
         <ul class="navbar-nav">
           <li class="nav-item font-weight-semibold d-none d-lg-block ms-0">
           <h1 class="welcome-text">Selamat Datang <span class="text-black fw-bold"><?php echo $_SESSION['nama'];?></span></h1>
-          </li>
+            </li>
         </ul>
-        <ul class="navbar-nav ms-auto">
-           
-          <li class="nav-item dropdown d-none d-lg-block user-dropdown">
-            <a class="nav-link" id="UserDropdown" href="#" data-bs-toggle="dropdown" aria-expanded="false">
-              <img class="img-xs rounded-circle" src="../../images/faces/face8.jpg" alt="Profile image"> </a>
-            <div class="dropdown-menu dropdown-menu-right navbar-dropdown" aria-labelledby="UserDropdown">
-              <div class="dropdown-header text-center">
-                <img class="img-md rounded-circle" src="../../images/faces/face8.jpg" alt="Profile image">
-                <p class="mb-1 mt-3 font-weight-semibold">Allen Moreno</p>
-                <p class="fw-light text-muted mb-0">allenmoreno@gmail.com</p>
-              </div>
-              <a class="dropdown-item"><i class="dropdown-item-icon mdi mdi-account-outline text-primary me-2"></i> Pengaturan</a>
-             <a class="dropdown-item"><i class="dropdown-item-icon mdi mdi-power text-primary me-2"></i>Keluar</a>
-            </div>
-          </li>
-        </ul>
+        
         <button class="navbar-toggler navbar-toggler-right d-lg-none align-self-center" type="button" data-bs-toggle="offcanvas">
           <span class="mdi mdi-menu"></span>
         </button>
@@ -170,8 +208,6 @@ session_start();
                 
             </a>
           </li>
-
-         
           
         </ul>
       </nav>
@@ -182,65 +218,53 @@ session_start();
             <div class="col-12 grid-margin stretch-card">
               <div class="card">
                 <div class="card-body">
-                <div class="d-sm-flex justify-content-between align-items-start">
-                    </div>
-                   <a href="tambah_file.php" class="btn btn-primary btn-sm text-white mb-0 me-0" type="button">
-                    <i class="mdi mdi-account-plus"></i>Tambah Data</a>
-                    <br>
-                                <div class="table-responsive">
-                                  <table id="example" class="table table-striped">
-                                    <thead>
-                                      <tr>
-                                      
-                                        <th>No</th>
-                                        <th>Nama Berkas</th>
-                                        <th>File</th>
-                                       <th>Aksi</th>
-                                      </tr>
-                                    </thead>
-                      <tbody>
-                      <?php 
-                        $no = 1;
-                        
-                        // Assuming $_SESSION['id_pengguna'] contains the logged-in user's id_pengguna value
-                        $id_pengguna = $_SESSION['id_pengguna'];
-
-                        $tampil = mysqli_query($koneksi, "SELECT * FROM tb_berkas WHERE id_pengguna = '$id_pengguna' ORDER BY kd_berkas");
-
-                        while ($data = mysqli_fetch_array($tampil)){
-                        ?>
-                        <tr>
-                          <td><?= $no++ ?></td>
-                          <td><?= $data['judul'] ?></td>
-                          <td><?= $data['file'] ?></td>
-                          <td>
-                            <a href="" class="btn btn-warning btn-sm">Detail</a>
-                            <a href='edit_file.php?update=<?= $data['kd_berkas'] ?>' class="btn btn-primary btn-sm">Edit</a>
-                            <a href="?hapus=<?= $data['kd_berkas'] ?>" onclick="return confirm('Apakah anda yakin ingin menghapus data ini?');" 
-                              class="btn btn-danger btn-sm">Hapus</a>
-                          </td>
-                        </tr>
-                        <?php } ?>
-                    </tbody>
-                    </table>
+                <h4 class="card-title">Edit Data Berkas</h4>
                     <?php
-                      if(isset($_GET['hapus'])){
-                        mysqli_query($koneksi, "Delete from tb_berkas where kd_berkas='$_GET[hapus]' ") or die (mysqli_error($koneksi));
-
-                        echo "<script>
-                            document.location='../../pages/forms/file.php';
-                            </script>";
-                        echo "<meta http-equiv=refrsh content=2;URL='file.php'>";
-                      }
+                    include('../../setup/koneksi.php');
+                    if (isset($_GET['update'])) {
+                        $query = mysqli_query($koneksi, "SELECT * FROM tb_berkas WHERE kd_berkas ='$_GET[update]'");
+                        $data = mysqli_fetch_array($query);
+                    }
                     ?>
-                </div>
-              </div>
+                    <!-- Formulir HTML disini -->
+                <form class="forms-sample" action="" method="POST" id="form-ketua" enctype="multipart/form-data">
+                    <input type="hidden" name="kd_berkas" value="<?= isset($data['kd_berkas']) ? $data['kd_berkas'] : ''; ?>">
+                    <div class="form-group">
+                        <label>Deskripsi</label>
+                        <input type="text" class="form-control" name="judul" value="<?= isset($data['judul']) ? $data['judul'] : ''; ?>" autocomplete="off">
+                    </div>
+                    
+                    <div class="form-group">
+                        <label>Unggah Berkas</label>
+                        <input type="file" name="file" class="file-upload-default">
+                        <div class="input-group col-xs-12">
+                            <?php if (isset($data['file']) && !empty($data['file'])) : ?>
+                                <input type="text" class="form-control file-upload-info" value="<?= $data['file']; ?>" readonly>
+                            <?php else : ?>
+                                <input type="text" class="form-control file-upload-info" readonly>
+                            <?php endif; ?>
+                            <span class="input-group-append mx-2">
+                                <button class="file-upload-browse btn btn-primary btn-sm" type="button">Upload</button>
+                            </span>
+                        </div>
+                    </div>
+                    <button type="submit" class="btn btn-outline-primary btn-icon-text" name="edit">
+                          <i class="ti-file btn-icon-prepend"></i>Simpan
+                    </button>
+                    
+                  </form>
+                <div>
             </div>
           </div>
         </div>
+      </div>
         <!-- content-wrapper ends -->
         <!-- partial:../../partials/_footer.html -->
-        <?php include "../../footer.php"; ?>
+        <footer class="footer">
+          <div class="d-sm-flex justify-content-center justify-content-sm-between">
+            <span class="float-none float-sm-right d-block mt-1 mt-sm-0 text-center">Copyright © 2023. Bakesbangpol Kab. Rembang.</span>
+          </div>
+        </footer>
         <!-- partial -->
       </div>
       <!-- main-panel ends -->
@@ -268,11 +292,9 @@ session_start();
   <script src="../../js/typeahead.js"></script>
   <script src="../../js/select2.js"></script>
   <!-- End custom js for this page-->
-  <script src="https://code.jquery.com/jquery-3.7.0.js"></script>
-  <script src="https://cdn.datatables.net/1.13.7/js/jquery.dataTables.min.js"></script>
-  <script>
-    new DataTable('#example');
-  </script>
+
+
+
 </body>
 
 </html>

@@ -164,19 +164,19 @@ include('../../setup/koneksi.php');
             <div class="col-12 grid-margin stretch-card">
                 <div class="card">
                     <div class="card-body">
-                        <a href="tambah_biodata.php" class="btn btn-primary btn-sm">Tambah Data</a>
+                        <a href="tambah_kegiatan.php" class="btn btn-primary btn-sm">Tambah Data</a>
                         <div class="table-responsive">
                             <table id="example" class="table table-striped">
                                 <thead>
                                     <tr>
                                         <th>No</th>
                                         <th>Nama Organisasi</th>
-                                        <th>Nama Lengkap</th>
-                                        <th>NIK</th>
-                                        <th>Jenis Kelamin</th>
-                                        <th>TTL</th>
-                                        <th>Jabatan</th>
-                                        <th>Aksi</th>
+                                        <th>Deskripsi</th>
+                                        <th>Tanggal Kegiatan</th>
+                                        <th>Lokasi</th>
+                                        <th>Surat Izin</th>
+                                        <th>File Tindakan</th>
+                                        <th>Status</th>
                                     </tr>
                                 </thead>
                                 <tbody>
@@ -184,30 +184,22 @@ include('../../setup/koneksi.php');
                                         $no = 1;
                                         $id_pengguna = $_SESSION['id_pengguna'];
 
-                                        $tampil = mysqli_query($koneksi, "SELECT tb_pengguna.nama as nama_pengguna, tb_biodata.jk as jk, tb_biodata.nama_kantor as nama_kantor,
-                                            tb_biodata.pekerjaan as pekerjaan,tb_biodata.nama as nama, tb_biodata.nik as nik, tb_biodata.tempat_lahir as tempat_lahir,tb_biodata.kewarganegaraan as kewarganegaraan,tb_biodata.tanggal_lahir as tanggal_lahir, 
-                                            tb_biodata.id_pengguna as id_pengguna, tb_biodata.kd_biodata as kd_biodata,tb_biodata.alamat as alamat, tb_biodata.alamat_kantor as alamat_kantor, tb_biodata.foto as foto,
-                                            tb_biodata.no_telp as no_telp, tb_biodata.agama as agama,tb_biodata.status_perkawinan as status_perkawinan, tb_biodata.jabatan as jabatan from tb_biodata INNER JOIN tb_pengguna ON 
-                                            tb_pengguna.id_pengguna = tb_biodata.id_pengguna where tb_biodata.id_pengguna = '$id_pengguna'
-                                            ORDER BY kd_biodata");
+                                        $tampil = mysqli_query($koneksi, "SELECT tb_pengguna.nama as nama_pengguna, tb_kegiatan.deskripsi as deskripsi, tb_kegiatan.tgl_kegiatan as tgl_kegiatan, tb_kegiatan.lokasi as lokasi,
+                                            tb_kegiatan.tgl_ajuan as tgl_ajuan, tb_kegiatan.file as file, tb_kegiatan.file_tindakan as file_tindakan, tb_kegiatan.status as status from tb_kegiatan INNER JOIN tb_pengguna ON 
+                                            tb_pengguna.id_pengguna = tb_kegiatan.id_pengguna where tb_kegiatan.id_pengguna = '$id_pengguna'
+                                            ORDER BY kd_kegiatan");
 
                                         while ($data = mysqli_fetch_array($tampil)){
                                     ?>
                                     <tr>
                                         <td><?= $no++ ?></td>
                                         <td><?= $data['nama_pengguna'] ?></td>
-                                        <td><?= $data['nama'] ?></td>
-                                        <td><?= $data['nik'] ?></td>
-                                        <td><?= $data['jk'] ?></td>
-                                        <td><?= $data['tempat_lahir'] . ' ' . $data['tanggal_lahir'] ?></td>
-                                        <td><?= $data['jabatan'] ?></td>
-                                        <td>
-                                            <button type="button" class="btn btn-warning btn-lg" data-bs-toggle="modal" data-bs-target="#exampleModal<?= $data['kd_biodata'] ?>">
-                                                Detail
-                                            </button>
-                                            <a href='edit_biodata.php?update=<?= $data['kd_biodata'] ?>' class="btn btn-primary btn-lg">Edit</a>
-                                            <a href="?hapus=<?= $data['kd_biodata'] ?>" onclick="return confirm('Apakah anda yakin ingin menghapus data ini?');" class="btn btn-danger btn-lg">Hapus</a>
-                                        </td>
+                                        <td><?= $data['deskripsi'] ?></td>
+                                        <td><?= $data['tgl_kegiatan'] ?></td>
+                                        <td><?= $data['lokasi'] ?></td>
+                                        <td><?= $data['file'] ?></td>
+                                        <td><?= $data['file_tindakan'] ?></td>
+                                        <td><?= $data['status'] ?></td>
                                     </tr>
                                     <!-- Modal -->
                                     <div class="modal fade" id="exampleModal<?= $data['kd_biodata'] ?>" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">

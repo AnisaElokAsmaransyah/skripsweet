@@ -32,7 +32,7 @@
             </a>
             <div class="collapse" id="tables">
               <ul class="nav flex-column sub-menu">
-                <li class="nav-item"> <a class="nav-link" href="pages/tables/rencana.php">Rencana</a></li>
+                <li class="nav-item"> <a class="nav-link" href="pages/forms/rencana.php">Rencana</a></li>
               </ul>
             </div>
             <div class="collapse" id="tables">

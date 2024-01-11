@@ -156,11 +156,8 @@ session_start();
                       <thead>
                         <tr>
                               <th>No.</th>
-                              <th>Nama Pengadu</th>
-                              <th>Alamat</th>
                               <th>Jenis Pengaduan</th>
                               <th>Isi</th>
-                              <th>Status</th>
                               <th>Aksi</th>
                              </tr>
                       </thead>
@@ -174,12 +171,9 @@ session_start();
                         ?>
                         <tr>
                             <td><?= $no++ ?></td>
-                            <td><?= $data['nama'] ?></td>
-                            <td><?= $data['alamat'] ?></td>
-                            <td><?= $data['jenis_pengaduan'] ?></td>
+                           <td><?= $data['jenis_pengaduan'] ?></td>
                             <td><?= $data['isi'] ?></td>
-                           <td><?= $data['status'] ?></td>
-                              <td>
+                            <td>
                               <button type="button" class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#staticBackdrop<?= $data['kd_pengaduan']; ?>">
                                 Detail
                               </button>

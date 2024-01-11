@@ -1,57 +1,74 @@
 
 <?php
 session_start();
-  include('../../setup/koneksi.php');
+include('../../setup/koneksi.php');
 
-  // proses simpan
-  if(isset($_POST['simpan'])){
+if (isset($_POST['simpan'])) {
+    $kd_berkas = $_POST['kd_berkas'];
+    $judul = $_POST['judul'];
+    $id_pengguna = $_SESSION['id_pengguna']; // Menggunakan id_pengguna dari session
+
     $eks_boleh = array('pdf', 'docx');
-    $nama = $_FILES['file']['name'];
-    $x = explode('.', $nama);
+    $file = $_FILES['file']['name'];
+    $x = explode('.', $file);
     $ekstensi = strtolower(end($x));
     $ukuran = $_FILES['file']['size'];
     $file_temp = $_FILES['file']['tmp_name'];
 
-    // Cek apakah berkas dengan nama yang sama sudah ada di database
-    $cek_duplikat = mysqli_query($koneksi, "SELECT * FROM tb_berkas WHERE file = '$nama'");
-    if(mysqli_num_rows($cek_duplikat) > 0) {
-      echo "<script>
-              alert('Berkas dengan nama yang sama sudah ada');
-              document.location='../../pages/forms/input_berkas.php';
-            </script>";
-      exit;
-    }
-
-    if(in_array($ekstensi, $eks_boleh) === true){
-      if($ukuran < 1044070){
-        move_uploaded_file($file_temp, '../../pages/file/'.$nama);
-        $simpan = mysqli_query($koneksi,"INSERT INTO tb_berkas (kd_berkas, nama_user,judul, file) VALUES 
-        ('$_POST[kd_berkas]', '$_POST[nama_user]', '$_POST[judul]', '$nama')");
-        
-        if($simpan){
-          echo "<script>
-                  alert('Data Anda Berhasil Disimpan');
-                  document.location='../../pages/forms/input_berkas.php';
-                </script>";
-        } else {
-          echo "<script>
-                  alert('Data Gagal disimpan');
-                  document.location='../../pages/forms/input_berkas.php';
-                </script>";
-        }
-      } else {
+    // Validasi apakah semua data terisi
+    if (empty($kd_berkas) || empty($judul) || empty($file) || empty($id_pengguna)) {
         echo "<script>
-                alert('Ukuran file terlalu besar');
-                document.location='../../pages/forms/input_berkas.php';
-              </script>";
-      }
+            alert('Semua data harus diisi!');
+            window.location.href='../../pages/forms/input_berkas.php';
+        </script>";
     } else {
-      echo "<script>
-              alert('Perhatikan ekstensi');
-              document.location='../../pages/forms/input_berkas.php';
+        // Check apakah judul berkas sudah terisi
+        $check_query = "SELECT COUNT(*) AS count FROM tb_berkas WHERE judul = '$judul'";
+        $check_result = mysqli_query($koneksi, $check_query);
+        $check_data = mysqli_fetch_assoc($check_result);
+
+        if ($check_data['count'] > 0) {
+            echo "<script>
+                alert('Judul Berkas sudah terisi');
+                window.location.href='../../pages/forms/input_berkas.php';
             </script>";
+        } else {
+            // Periksa ekstensi file
+            if (!in_array($ekstensi, $eks_boleh)) {
+                echo "<script>
+                    alert('Ekstensi file tidak diizinkan. Hanya file PDF dan DOCX yang diperbolehkan.');
+                    window.location.href='../../pages/forms/input_berkas.php';
+                </script>";
+            } else {
+                // Periksa ukuran file (dalam bytes)
+                $ukuran_maksimal = 10 * 1024 * 1024; // 10 MB
+
+                if ($ukuran > $ukuran_maksimal) {
+                    echo "<script>
+                        alert('Ukuran file terlalu besar. Maksimal 10 MB.');
+                        window.location.href='../../pages/forms/input_berkas.php';
+                    </script>";
+                } else {
+                    // Masukkan data ke tb_berkas
+                    $input = "INSERT INTO tb_berkas (kd_berkas, judul, file, id_pengguna) VALUES 
+                        ('$kd_berkas', '$judul', '$file', '$id_pengguna')";
+
+                    if (mysqli_query($koneksi, $input)) {
+                        // Unggah file
+                        move_uploaded_file($file_temp, "../../../images/berkas/" . $file);
+
+                        echo "<script>
+                            alert('Berkas anda berhasil dikirim!');
+                            window.location.href='../../pages/forms/input_berkas.php';
+                        </script>";
+                    } else {
+                        echo "Error: " . $input . "<br>" . mysqli_error($koneksi);
+                    }
+                }
+            }
+        }
     }
-  }
+}
 ?>
 
 
@@ -108,22 +125,7 @@ session_start();
          
           </li>
         </ul>
-        <ul class="navbar-nav ms-auto">
-           
-          <li class="nav-item dropdown d-none d-lg-block user-dropdown">
-            <a class="nav-link" id="UserDropdown" href="#" data-bs-toggle="dropdown" aria-expanded="false">
-              <img class="img-xs rounded-circle" src="../../images/faces/face8.jpg" alt="Profile image"> </a>
-            <div class="dropdown-menu dropdown-menu-right navbar-dropdown" aria-labelledby="UserDropdown">
-              <div class="dropdown-header text-center">
-                <img class="img-md rounded-circle" src="../../images/faces/face8.jpg" alt="Profile image">
-                <p class="mb-1 mt-3 font-weight-semibold">Allen Moreno</p>
-                
-              </div>
-              <a class="dropdown-item"><i class="dropdown-item-icon mdi mdi-account-outline text-primary me-2"></i> Pengaturan</a>
-             <a href="../../../logout.php" class="dropdown-item"><i class="dropdown-item-icon mdi mdi-power text-primary me-2"></i>Keluar</a>
-            </div>
-          </li>
-        </ul>
+        
         <button class="navbar-toggler navbar-toggler-right d-lg-none align-self-center" type="button" data-bs-toggle="offcanvas">
           <span class="mdi mdi-menu"></span>
         </button>
@@ -170,21 +172,18 @@ session_start();
               <i class="menu-arrow"></i>
             </a>
             <div class="collapse" id="form-elements">
-            <ul class="nav flex-column sub-menu">
-                <li class="nav-item"><a class="nav-link" href="../../pages/forms/input_pendaftaran.php">Form Pendaftaran</a></li>
+              <ul class="nav flex-column sub-menu">
+                <li class="nav-item"><a class="nav-link" href="input_pendaftaran.php">Pendaftaran</a></li>
               </ul>
               <ul class="nav flex-column sub-menu">
-                <li class="nav-item"><a class="nav-link" href="../../pages/forms/input_publikasi.php">Form Publikasi</a></li>
+                <li class="nav-item"><a class="nav-link" href="input_publikasi.php">Publikasi</a></li>
               </ul>
               <ul class="nav flex-column sub-menu">
-                <li class="nav-item"><a class="nav-link" href="../../pages/forms/input_berkas.php">Form Berkas</a></li>
-              </ul>
-              <ul class="nav flex-column sub-menu">
-                <li class="nav-item"><a class="nav-link" href="../../pages/forms/input_pengguna.php">Pengguna Baru</a></li>
+                <li class="nav-item"><a class="nav-link" href="input_pengguna.php">Pengguna Baru</a></li>
               </ul>
             </div>
           </li>
-          
+
           <li class="nav-item">
             <a class="nav-link" data-bs-toggle="collapse" href="#tables" aria-expanded="false" aria-controls="tables">
               <i class="menu-icon mdi mdi-table"></i>
@@ -193,13 +192,25 @@ session_start();
             </a>
             <div class="collapse" id="tables">
               <ul class="nav flex-column sub-menu">
-                <li class="nav-item"> <a class="nav-link" href="../../pages/tables/data_pendaftaran.php">Data Ormas Baru</a></li>
+                <li class="nav-item"> <a class="nav-link" href="data_pendaftaran.php">Data Ormas Baru</a></li>
               </ul>
             </div>
             
             <div class="collapse" id="tables">
               <ul class="nav flex-column sub-menu">
-                <li class="nav-item"> <a class="nav-link" href="../../pages/tables/tambah_akunormas.php">Akun Baru Ormas</a></li>
+                <li class="nav-item"> <a class="nav-link" href="tambah_akunormas.php">Akun Baru Ormas</a></li>
+              </ul>
+            </div>
+
+            <div class="collapse" id="tables">
+              <ul class="nav flex-column sub-menu">
+                <li class="nav-item"> <a class="nav-link" href="biodata.php">Biodata Ormas</a></li>
+              </ul>
+            </div>
+
+            <div class="collapse" id="tables">
+              <ul class="nav flex-column sub-menu">
+                <li class="nav-item"> <a class="nav-link" href="input_berkas.php">Berkas</a></li>
               </ul>
             </div>
           </li>
@@ -212,7 +223,7 @@ session_start();
             </a>
              <div class="collapse" id="tables">
               <ul class="nav flex-column sub-menu">
-                <li class="nav-item"> <a class="nav-link" href="../../pages/tables/data_aspirasi.php">Data Aspirasi</a></li>
+                <li class="nav-item"> <a class="nav-link" href="data_aspirasi.php">Data Aspirasi</a></li>
               </ul>
             </div>
           </li>
@@ -225,15 +236,22 @@ session_start();
             </a>
             <div class="collapse" id="icons">
               <ul class="nav flex-column sub-menu">
-                <li class="nav-item"> <a class="nav-link" href="../../pages/forms/verifikasi.php">Verifikasi</a></li>
+                <li class="nav-item"> <a class="nav-link" href="verifikasi.php">Verifikasi</a></li>
               </ul>
               <ul class="nav flex-column sub-menu">
-                <li class="nav-item"> <a class="nav-link" href="../../pages/forms/tanggapi.php">Tanggapi</a></li>
+                <li class="nav-item"> <a class="nav-link" href="balasan_ormas.php">Balasan Ormas</a></li>
               </ul>
 			       <ul class="nav flex-column sub-menu">
-                <li class="nav-item"> <a class="nav-link" href="../../pages/forms/laporan.php">Aduan Selesai</a></li>
+                <li class="nav-item"> <a class="nav-link" href="laporan.php">Aduan Selesai</a></li>
               </ul>
             </div>
+          </li>
+          <li class="nav-item">
+            <a class="nav-link" href="../../../logout.php">
+                <i class="menu-icon mdi mdi-account-circle-outline"></i>
+                <span class="menu-title">Keluar</span>
+                
+            </a>
           </li>
 			</ul>
       </nav>
@@ -251,7 +269,7 @@ session_start();
                       $kode = $isi['max_code'];
                       $urutan = (int)substr($kode, 1, 2);
                       $urutan++;
-                      $huruf = "B";
+                      $huruf = "F";
                       $kd_pend = $huruf . sprintf("%02s", $urutan);
                     ?>
                 <form class="forms-sample" action="input_berkas.php" method="POST" enctype="multipart/form-data">
@@ -260,10 +278,6 @@ session_start();
                     <input type="text" class="form-control " name="kd_berkas" value="<?= $kd_pend?>" readonly>
                   </div>
                   <div class="form-group">
-                    <label>Nama User</label>
-                    <input type="text" class="form-control" name="nama_user" autocomplete="off" >
-                  </div>
-                 <div class="form-group">
                     <label>Judul</label>
                     <input type="text" class="form-control" name="judul" autocomplete="off" >
                   </div>
@@ -296,8 +310,6 @@ session_start();
                       <thead>
                         <tr>
                           <th>No</th>
-                          <th>Kode Berkas</th>
-                          <th>Nama User</th>
                           <th>Judul</th>
                           <th>File</th>
                           <th>Aksi</th>
@@ -311,11 +323,10 @@ session_start();
                         ?>
                         <tr>
                             <td><?= $no++ ?></td>
-                            <td><?= $data['kd_berkas'] ?></td>
-                            <td ><?= $data['nama_user'] ?></td>
                             <td ><?= $data['judul'] ?></td>
                             <td><?= $data['file'] ?></td>
                             <td>
+                                <a href='' class="btn btn-warning btn-lg">Detail</a>
                                 <a href='edit_berkas.php?update=<?= $data['kd_berkas'] ?>' class="btn btn-primary btn-lg">Edit</a>
                                 <a href="?hapus=<?= $data['kd_berkas'] ?>" onclick="return confirm('Apakah anda yakin ingin menghapus data ini?');" 
                                 class="btn btn-danger btn-lg ">Hapus</a>

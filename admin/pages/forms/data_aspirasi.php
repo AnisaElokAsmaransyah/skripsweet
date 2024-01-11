@@ -51,24 +51,18 @@ session_start();
       <div class="navbar-menu-wrapper d-flex align-items-top"> 
         <ul class="navbar-nav">
           <li class="nav-item font-weight-semibold d-none d-lg-block ms-0">
-          <h1 class="welcome-text">Selamat Datang <span class="text-black fw-bold"><?php echo $_SESSION['nama'];?></span></h1> 
+          <h1 class="welcome-text">Selamat Datang <span class="text-black fw-bold"><?php echo $_SESSION['nama'];?></span></h1>
           </li>
         </ul>
         <ul class="navbar-nav ms-auto">
-         
-         
-         <li class="nav-item dropdown d-none d-lg-block user-dropdown">
-            <a class="nav-link" id="UserDropdown" href="#" data-bs-toggle="dropdown" aria-expanded="false">
-              <img class="img-xs rounded-circle" src="../../images/faces/face8.jpg" alt="Profile image"> </a>
-            <div class="dropdown-menu dropdown-menu-right navbar-dropdown" aria-labelledby="UserDropdown">
-              <div class="dropdown-header text-center">
-                <img class="img-md rounded-circle" src="../../images/faces/face8.jpg" alt="Profile image">
-                <p class="mb-1 mt-3 font-weight-semibold">Allen Moreno</p>
-               </div>
-              <a class="dropdown-item"><i class="dropdown-item-icon mdi mdi-account-outline text-primary me-2"></i> Pengaturan </a>
-              <a href="../../../logout.php" class="dropdown-item"><i class="dropdown-item-icon mdi mdi-power text-primary me-2"></i>Keluar</a>
-            </div>
+          <li class="nav-item">
+            <form class="search-form" action="#">
+              <i class="icon-search"></i>
+              <input type="search" class="form-control" placeholder="Search Here" title="Search here">
+            </form>
           </li>
+         
+         
         </ul>
         <button class="navbar-toggler navbar-toggler-right d-lg-none align-self-center" type="button" data-bs-toggle="offcanvas">
           <span class="mdi mdi-menu"></span>
@@ -116,21 +110,18 @@ session_start();
               <i class="menu-arrow"></i>
             </a>
             <div class="collapse" id="form-elements">
-            <ul class="nav flex-column sub-menu">
-                <li class="nav-item"><a class="nav-link" href="../../pages/forms/input_pendaftaran.php">Form Pendaftaran</a></li>
+              <ul class="nav flex-column sub-menu">
+                <li class="nav-item"><a class="nav-link" href="input_pendaftaran.php">Pendaftaran</a></li>
               </ul>
               <ul class="nav flex-column sub-menu">
-                <li class="nav-item"><a class="nav-link" href="../../pages/forms/input_publikasi.php">Form Publikasi</a></li>
+                <li class="nav-item"><a class="nav-link" href="input_publikasi.php">Publikasi</a></li>
               </ul>
               <ul class="nav flex-column sub-menu">
-                <li class="nav-item"><a class="nav-link" href="../../pages/forms/input_berkas.php">Form Berkas</a></li>
-              </ul>
-              <ul class="nav flex-column sub-menu">
-                <li class="nav-item"><a class="nav-link" href="../../pages/forms/input_pengguna.php">Pengguna Baru</a></li>
+                <li class="nav-item"><a class="nav-link" href="input_pengguna.php">Pengguna Baru</a></li>
               </ul>
             </div>
           </li>
-          
+
           <li class="nav-item">
             <a class="nav-link" data-bs-toggle="collapse" href="#tables" aria-expanded="false" aria-controls="tables">
               <i class="menu-icon mdi mdi-table"></i>
@@ -139,13 +130,25 @@ session_start();
             </a>
             <div class="collapse" id="tables">
               <ul class="nav flex-column sub-menu">
-                <li class="nav-item"> <a class="nav-link" href="../../pages/tables/data_pendaftaran.php">Data Ormas Baru</a></li>
+                <li class="nav-item"> <a class="nav-link" href="data_pendaftaran.php">Data Ormas Baru</a></li>
               </ul>
             </div>
             
             <div class="collapse" id="tables">
               <ul class="nav flex-column sub-menu">
-                <li class="nav-item"> <a class="nav-link" href="../../pages/tables/tambah_akunormas.php">Akun Baru Ormas</a></li>
+                <li class="nav-item"> <a class="nav-link" href="tambah_akunormas.php">Akun Baru Ormas</a></li>
+              </ul>
+            </div>
+
+            <div class="collapse" id="tables">
+              <ul class="nav flex-column sub-menu">
+                <li class="nav-item"> <a class="nav-link" href="biodata.php">Biodata Ormas</a></li>
+              </ul>
+            </div>
+
+            <div class="collapse" id="tables">
+              <ul class="nav flex-column sub-menu">
+                <li class="nav-item"> <a class="nav-link" href="input_berkas.php">Berkas</a></li>
               </ul>
             </div>
           </li>
@@ -158,7 +161,7 @@ session_start();
             </a>
              <div class="collapse" id="tables">
               <ul class="nav flex-column sub-menu">
-                <li class="nav-item"> <a class="nav-link" href="../../pages/tables/data_aspirasi.php">Data Aspirasi</a></li>
+                <li class="nav-item"> <a class="nav-link" href="data_aspirasi.php">Data Aspirasi</a></li>
               </ul>
             </div>
           </li>
@@ -171,15 +174,22 @@ session_start();
             </a>
             <div class="collapse" id="icons">
               <ul class="nav flex-column sub-menu">
-                <li class="nav-item"> <a class="nav-link" href="../../pages/forms/verifikasi.php">Verifikasi</a></li>
+                <li class="nav-item"> <a class="nav-link" href="verifikasi.php">Verifikasi</a></li>
               </ul>
               <ul class="nav flex-column sub-menu">
-                <li class="nav-item"> <a class="nav-link" href="../../pages/forms/tanggapi.php">Tanggapi</a></li>
+                <li class="nav-item"> <a class="nav-link" href="balasan_ormas.php">Balasan Ormas</a></li>
               </ul>
 			       <ul class="nav flex-column sub-menu">
-                <li class="nav-item"> <a class="nav-link" href="../../pages/forms/laporan.php">Aduan Selesai</a></li>
+                <li class="nav-item"> <a class="nav-link" href="laporan.php">Aduan Selesai</a></li>
               </ul>
             </div>
+          </li>
+          <li class="nav-item">
+            <a class="nav-link" href="../../../logout.php">
+                <i class="menu-icon mdi mdi-account-circle-outline"></i>
+                <span class="menu-title">Keluar</span>
+                
+            </a>
           </li>
 			</ul>
       </nav>
@@ -190,7 +200,7 @@ session_start();
             <div class="col-lg-12 grid-margin stretch-card">
               <div class="card">
                 <div class="card-header mt-3 bg-white">
-                  <h4 class="card-title">Data Pengajuan Akun Ormas Baru</h4>
+                  <h4 class="card-title">Data Aspirasi</h4>
                 </div>
                 <div class="card-body">
                   <div class="table-responsive">
@@ -198,47 +208,40 @@ session_start();
                       <thead>
                         <tr>
                                <th>No.</th>
-                              <th>No. Registrasi</th>
-                              <th>Nama Organisasi</th>
-                               <th>Alamat</th>
-                              <th>Email</th>
-                              <th>Bentuk Organisasi</th>
-                              <th>Sifat Organisasi</th>
-                              <th>Aksi</th>
+                              <th>Kode Aspirasi</th>
+                              <th>Nama </th>
+                              <th>No Hp</th>
+                              <th>Aspirasi</th>
+                              <th>Status</th>
                         </tr>
                       </thead>
                       <tbody>
                         <?php 
                             $no = 1;
-                            $tampil ="SELECT * FROM tb_pendaftaran, tb_bentukorganisasi,tb_sifatorganisasi
-                            where tb_pendaftaran.bentukorganisasi = tb_bentukorganisasi.kd_bentukorganisasi and 
-                            tb_pendaftaran.sifat_organisasi = tb_sifatorganisasi.kd_sifatorganisasi and status = 'pending'
-                            order by kd_pendaftaran desc";
+                            $tampil ="SELECT * FROM tb_aspirasi order by kd_aspirasi";
                             $result = mysqli_query($koneksi,$tampil);
                             while ($data = mysqli_fetch_array($result)){
                         ?>
                         <tr>
                             <td><?= $no++ ?></td>
-                            <td><?= $data['kd_pendaftaran'] ?></td>
+                            <td><?= $data['kd_aspirasi'] ?></td>
                             <td><?= $data['nama'] ?></td>
-                            <td><?= $data['alamat'] ?></td>
-                            <td ><?= $data['email'] ?></td>
-                            <td><?= $data['bentukorganisasi'] ?></td>
-                            <td><?= $data['sifat_organisasi'] ?></td>
+                            <td><?= $data['no_hp'] ?></td>
+                            <td><?= $data['aspirasi'] ?></td>
                               <?php 
                                 if ($data['status'] == 'pending') {
                               ?>
                               <td>
-                                <form action="data_pendaftaran.php" method="POST">
-                                  <input type="hidden" name="kd_pendaftaran" value="<?= $data['kd_pendaftaran']; ?>"/>
-                                  <input type="submit" class="btn btn-warning btn-sm" name="kirim" value="Kirim" />
-                                  <!-- <input type="submit" class="btn btn-danger btn-sm" name="tidaksetuju" value="Tolak" /> -->
+                                <form action="data_aspirasi.php" method="POST">
+                                  <input type="hidden" name="kd_aspirasi" value="<?= $data['kd_aspirasi']; ?>"/>
+                                  <input type="submit" class="btn btn-warning btn-lg" name="setuju" value="Setuju" />
+                                  <input type="submit" class="btn btn-danger btn-lg" name="tidaksetuju" value="Tidak Setuju" />
                                 </form>
                               </td>
                               <?php
-                                }else if($data['status'] == 'kirim'){
+                                }else if($data['status'] == 'setuju'){
                               ?>
-                              <td>Berhasil dikirim</td>
+                              <td>Aspirasi diterima</td>
                               <?php
                               }
                               ?>
@@ -247,26 +250,26 @@ session_start();
                       </tbody>
                     </table>
                     <?php
-                      if(isset($_POST['kirim'])){
-                        $kd_pendaftaran = $_POST['kd_pendaftaran'];
+                      if(isset($_POST['setuju'])){
+                        $kd_aspirasi = $_POST['kd_aspirasi'];
 
-                        $select = "UPDATE tb_pendaftaran SET status ='kirim' WHERE kd_pendaftaran = '$kd_pendaftaran' ";
+                        $select = "UPDATE tb_aspirasi SET status ='setuju' WHERE kd_aspirasi = '$kd_aspirasi' ";
                         $result = mysqli_query($koneksi,$select);
                         echo "<script>
-                        alert('Data berhasil dikirim !');
-                        document.location='../../pages/tables/data_pendaftaran.php';
+                        alert('Data Disetujui !');
+                        document.location='../../pages/tables/data_aspirasi.php';
                        </script>";
                       }
-                      // if(isset($_POST['tidaksetuju'])){
-                      //   $kd_pendaftaran = $_POST['kd_pendaftaran'];
+                      if(isset($_POST['tidaksetuju'])){
+                        $kd_aspirasi = $_POST['kd_aspirasi'];
 
-                      //   $select = "DELETE FROM tb_pendaftaran WHERE kd_pendaftaran = '$kd_pendaftaran' ";
-                      //   $result = mysqli_query($koneksi,$select);
-                      //   echo "<script>
-                      //   alert('Data Tidak Disetujui !');
-                      //   document.location='../../pages/tables/data_pendaftaran.php';
-                      //  </script>";
-                      // }
+                        $select = "DELETE FROM tb_aspirasi WHERE kd_aspirasi = '$kd_aspirasi' ";
+                        $result = mysqli_query($koneksi,$select);
+                        echo "<script>
+                        alert('Data Tidak Disetujui !');
+                        document.location='../../pages/tables/data_aspirasi.php';
+                       </script>";
+                      }
                     ?>
                   </div>
                 </div>

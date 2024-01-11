@@ -15,27 +15,61 @@ if(isset($_POST['simpan'])){
     $jam = date('H:i:s');
     $current_time = date('Y-m-d H:i:s');
   
-    // Check if both fields are not empty
-  
+    // Check if any field is empty
+    if(empty($kd_pengaduan) || empty($nama) || empty($no_hp) || empty($alamat) || empty($jenis_pengaduan) || empty($isi) || empty($_FILES['file']['name'])) {
+        echo "<script>
+        alert('Semua kolom harus diisi. Silakan isi kembali formulir. !');
+        document.location='pengaduan.php';
+       </script>";
+        // Tambahkan kode lain sesuai kebutuhan, seperti kembali ke halaman formulir
+        exit();
+    }
+
     // Handle the uploaded photo if provided
-    if(isset($_FILES['file']) && $_FILES['file']['size'] > 0) {
-      $bukti_foto = $_FILES['file']['name'];
-      $bukti_foto_tmp = $_FILES['file']['tmp_name'];
-      $upload_directory = 'admin/pages/file/bukti_pengaduan/';
+    $allowed_extensions = array("jpg", "jpeg", "png");
+    $max_file_size = 20 * 1024 * 1024; // 20MB
+
+    $file_extension = pathinfo($_FILES['file']['name'], PATHINFO_EXTENSION);
+    $file_size = $_FILES['file']['size'];
+
+    // Check if the file extension is allowed
+    if(in_array(strtolower($file_extension), $allowed_extensions)) {
+        // Check if the file size is within the limit
+        if($file_size <= $max_file_size) {
+            $bukti_foto = $_FILES['file']['name'];
+            $bukti_foto_tmp = $_FILES['file']['tmp_name'];
+            $upload_directory = 'images/bukti_pengaduan/';
   
-      // Construct a new filename
-      $new_filename = $kd_pengaduan . '_' . str_replace([':', ' ', '-'], '_', $current_time . ' ' . $tanggal) . '_' . $bukti_foto;
+            // Construct a new filename
+            $new_filename = $kd_pengaduan . '_' . str_replace([':', ' ', '-'], '_', $current_time . ' ' . $tanggal) . '_' . $bukti_foto;
   
-      // Move the uploaded photo to the specified directory with the new filename
-      if(move_uploaded_file($bukti_foto_tmp, $upload_directory . $new_filename)){
-        // Photo upload successful
-      } else {
-        // Photo upload failed
-        echo "Gagal Mengunggah Foto";
-      }
+            // Move the uploaded photo to the specified directory with the new filename
+            if(move_uploaded_file($bukti_foto_tmp, $upload_directory . $new_filename)){
+                // Photo upload successful
+            } else {
+                // Photo upload failed
+                echo "<script>
+                    alert('Gagal mengungah Foto !');
+                    document.location='pengaduan.php';
+                </script>";
+                // Tambahkan kode lain sesuai kebutuhan, seperti kembali ke halaman formulir
+                exit();
+            }
+        } else {
+             echo "<script>
+                alert('Ukuran file terlalu besar. Maksimum 20MB.');
+                document.location='pengaduan.php';
+            </script>";
+            // Tambahkan kode lain sesuai kebutuhan, seperti kembali ke halaman formulir
+            exit();
+        }
     } else {
-      // No photo uploaded, set filename to empty
-      $new_filename = '';
+       echo "<script>
+                alert('Jenis file tidak didukung. Harap unggah file gambar (jpg, jpeg, png, gif).');
+                document.location='pengaduan.php';
+            </script>";
+        // Tambahkan kode lain sesuai kebutuhan, seperti kembali ke halaman formulir
+        exit();
     }
   
     // Proceed to insert data into the database
@@ -48,14 +82,18 @@ if(isset($_POST['simpan'])){
       $title = 'Berhasil';
       $message = 'Pengaduan berhasil terkirim';
       $type = 'success';
+      echo "<script>alert('$message');</script>";
       header('location: pengaduan.php');
     } else {
-      echo "Gagal Mengirimkan Aduan";
+      echo "<script>
+                alert('Gagal Mengirimkan Aduan');
+                document.location='pengaduan.php';
+            </script>";
     }
-  }
-  
-  
-  ?>
+}
+?>
+
+
 
 <!DOCTYPE html>
 <html lang="en">
@@ -254,13 +292,12 @@ if(isset($_POST['simpan'])){
 
                     <div class="form-group">
                       <label >Isi Pengaduan</label>
-                      <input type="text" class="form-control" name="isi" placeholder="Isi Pengaduan" autocomplete="off">
+                    <input type="text" class="form-control" name="isi" placeholder="Isi Pengaduan" autocomplete="off">
                     </div> 
 
                     <div class="form-group">
                       <label>Bukti Foto</label>
-                      <input type="file" name="file" class="file-upload-default">
-                      
+                     <input type="file" name="file" class="file-upload-default">
                     </div>
                    
                     <button type="submit" class="btn btn-outline-primary btn-icon-text" name="simpan">
@@ -269,7 +306,18 @@ if(isset($_POST['simpan'])){
                     <button type="reset" class="btn btn-outline-warning btn-icon-text" name="reset">
                           <i class="ti-reload btn-icon-prepend"></i>Reset
                     </button>
-                  </form>
+                    
+                    <div class="form-group">
+                    <label><b>Catatan:</b></label>
+                    <p size="2">
+                        <ul>
+                            <li><i>Pastikan semua kolom terisi dengan benar dan sesuai dengan faktanya</i></li>
+                            <li><i>Jangan lupa sertakan <b>nama ormas </b> saat mengisi isi pengaduan</i></li>
+                            <li><i>File yang bisa di upload hanya format "jpg", "jpeg", "png" dg ukuran 20mb</i></li>
+                        </ul>
+                   </p>
+                    </div>
+                   </form>
                     </div> <!-- end of text-container -->
                     <a class="btn-outline-reg" href="index.php">Kembali</a>
                   

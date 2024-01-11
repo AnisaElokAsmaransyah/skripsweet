@@ -19,6 +19,11 @@
                 <li class="nav-item"> <a class="nav-link" href="pages/tables/verifikasi_pendaftaran.php">Data Ormas Baru</a></li>
               </ul>
             </div>
+            <div class="collapse" id="tables">
+              <ul class="nav flex-column sub-menu">
+                <li class="nav-item"> <a class="nav-link" href="pages/tables/tindaklanjut_kegiatan.php">Pengajuan Kegiatan</a></li>
+              </ul>
+            </div>
          </li>
          
           <li class="nav-item">

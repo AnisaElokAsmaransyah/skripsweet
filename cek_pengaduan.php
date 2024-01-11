@@ -178,7 +178,8 @@ include('setup/koneksi.php');
             <th>Isi</th>
             <th>Tanggal Pengaduan</th>
             <th>Status</th>
-            <th>Tanggapan</th>
+            <th>Tanggapan Ormas</th>
+            <th>Tindakan Bakesbangpol</th>
             <th>Tanggal Tanggapan</th>
              </tr>
     </thead>
@@ -206,6 +207,7 @@ include('setup/koneksi.php');
                     echo "<td>{$row['tgl_aduan']}</td>";
                     echo "<td>{$row['status']}</td>";
                     echo "<td>{$row['tanggapan']}</td>";
+                    echo "<td>{$row['tindakan']}</td>";
                     echo "<td>{$row['tgl_tanggapan']}</td>";
                     echo "</tr>";
                     $no++;

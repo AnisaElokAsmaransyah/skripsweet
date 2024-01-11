@@ -2,10 +2,9 @@
 session_start();
 include('../../setup/koneksi.php');
 
-if (isset($_POST['simpan'])) {
-    // Validasi kolom lainnya dan tangani kesalahan jika diperlukan.
+if (isset($_POST['edit'])) {
     $kd_biodata = $_POST['kd_biodata'];
-    $id_pengguna = $_SESSION['id_pengguna']; 
+    $id_pengguna = $_SESSION['id_pengguna'];
     $nama = $_POST['nama'];
     $nik = $_POST['nik'];
     $agama = $_POST['agama'];
@@ -20,56 +19,82 @@ if (isset($_POST['simpan'])) {
     $nama_kantor = $_POST['nama_kantor'];
     $alamat_kantor = $_POST['alamat_kantor'];
     $jabatan = $_POST['jabatan'];
-    $eks_boleh = array('jpg', 'jpeg','png');
-    $foto = $_FILES['foto']['name'];
-    $x = explode('.', $foto);
-    $ekstensi = strtolower(end($x));
-    $ukuran = $_FILES['foto']['size'];
-    $file_temp = $_FILES['foto']['tmp_name'];
 
-    // Validasi apakah semua data terisi
-    if (empty($kd_biodata) || empty($id_pengguna) || empty($nama) || empty($nik) || empty($agama) || empty($kewarganegaraan) || empty($jk) ||
-        empty($tempat_lahir) || empty($tanggal_lahir) || empty($status_perkawinan) || empty($alamat) || empty($no_telp) ||
-        empty($pekerjaan) || empty($nama_kantor) || empty($alamat_kantor) || empty($jabatan) || empty($foto)) {
+    // Handle file upload
+    $uploadDir = "../../../images/biodata/";  // Ganti dengan path yang sesuai
+    $fotoName = $_FILES['foto']['name'];
+    $fotoTempName = $_FILES['foto']['tmp_name'];
 
-        echo "<script>
-            alert('Semua data harus diisi!');
-            window.location.href='../../pages/forms/tambah_biodata.php';
-        </script>";
-    // } else {
-    //     // Check apakah jabatan sudah terisi
-    //     $check_query = "SELECT COUNT(*) AS count FROM tb_biodata WHERE jabatan = '$jabatan'";
-    //     $check_result = mysqli_query($koneksi, $check_query);
-    //     $check_data = mysqli_fetch_assoc($check_result);
+    // Variabel untuk menyimpan path foto
+    $fotoPath = '';
 
-    //     if ($check_data['count'] > 0) {
-    //         echo "<script>
-    //             alert('Posisi Jabatan sudah terisi');
-    //             window.location.href='../../pages/forms/tambah_biodata.php';
-    //         </script>";
+    // Cek apakah ada file foto yang diunggah
+    if (!empty($fotoName)) {
+        // Cek apakah itu file gambar dengan ekstensi yang diizinkan
+        $allowedExtensions = ['jpg', 'jpeg', 'png'];  // Ekstensi yang diizinkan
+        $fotoExtension = strtolower(pathinfo($fotoName, PATHINFO_EXTENSION));
+
+        if (in_array($fotoExtension, $allowedExtensions)) {
+            // Jika foto baru diunggah dan ekstensinya sesuai, pindahkan file yang diunggah ke direktori yang diinginkan
+            move_uploaded_file($fotoTempName, $uploadDir . $fotoName);
+            $fotoPath = $fotoName;
         } else {
-            // Masukkan data ke tb_biodata
-            $input = "INSERT INTO tb_biodata (kd_biodata,id_pengguna, nama, nik, agama, kewarganegaraan, jk, tempat_lahir, tanggal_lahir,
-                status_perkawinan, alamat, no_telp, pekerjaan, nama_kantor, alamat_kantor, jabatan, foto) VALUES 
-                ('$kd_biodata', '$id_pengguna', '$nama', '$nik', '$agama', '$kewarganegaraan', '$jk', '$tempat_lahir', '$tanggal_lahir',
-                '$status_perkawinan', '$alamat', '$no_telp', '$pekerjaan', '$nama_kantor', '$alamat_kantor',
-                '$jabatan', '$foto')";
-            
-            if (mysqli_query($koneksi, $input)) {
-                // Unggah file
-                move_uploaded_file($file_temp, "../../../images/biodata/" . $foto);
-
-                echo "<script>
-                    alert('Data anda berhasil dikirim!');
-                    window.location.href='../../pages/forms/biodata.php';
-                </script>";
-            } else {
-                echo "Error: " . $input . "<br>" . mysqli_error($koneksi);
-            }
+            // Jika ekstensi tidak diizinkan, gunakan foto yang sudah ada sebelumnya
+            $queryGetFoto = "SELECT foto FROM tb_biodata WHERE kd_biodata = '$kd_biodata'";
+            $resultGetFoto = mysqli_query($koneksi, $queryGetFoto);
+            $rowGetFoto = mysqli_fetch_assoc($resultGetFoto);
+            $fotoPath = $rowGetFoto['foto'];
         }
+    } else {
+        // Jika tidak ada file foto yang diunggah, gunakan foto yang sudah ada sebelumnya
+        $queryGetFoto = "SELECT foto FROM tb_biodata WHERE kd_biodata = '$kd_biodata'";
+        $resultGetFoto = mysqli_query($koneksi, $queryGetFoto);
+        $rowGetFoto = mysqli_fetch_assoc($resultGetFoto);
+        $fotoPath = $rowGetFoto['foto'];
     }
 
+    // Masukkan data ke tb_biodata termasuk kolom foto
+    $query = "UPDATE tb_biodata SET 
+                id_pengguna = '$id_pengguna',
+                nama = '$nama',
+                nik = '$nik',
+                agama = '$agama',
+                kewarganegaraan = '$kewarganegaraan',
+                jk = '$jk',
+                tempat_lahir = '$tempat_lahir',
+                tanggal_lahir = '$tanggal_lahir',
+                status_perkawinan = '$status_perkawinan',
+                alamat = '$alamat',
+                no_telp = '$no_telp',
+                pekerjaan = '$pekerjaan',
+                nama_kantor = '$nama_kantor',
+                alamat_kantor = '$alamat_kantor',
+                jabatan = '$jabatan',
+                foto = '$fotoPath'
+            WHERE kd_biodata = '$kd_biodata'";
+
+    if (mysqli_query($koneksi, $query)) {
+        // Redirect setelah berhasil mengedit data
+        header("Location: biodata.php");
+        exit();
+    } else {
+        // Menampilkan pesan error dan kembali ke halaman edit
+        echo "<script>
+                  alert('Gagal menyimpan data. Periksa kembali data anda.');
+                  window.location.href='edit_biodata.php?update=$kd_biodata';  // Perbarui halaman edit
+                 </script>";
+        exit();
+    }
+}
 ?>
+
+
+
+
+
+
+<!-- Bagian HTML tetap sama seperti sebelumnya -->
+
 
 
 
@@ -232,136 +257,135 @@ if (isset($_POST['simpan'])) {
             <div class="col-12 grid-margin stretch-card">
               <div class="card">
                 <div class="card-body">
-                <?php
-                      $auto = mysqli_query($koneksi, "Select max(kd_biodata) as max_code from tb_biodata");
-                      $isi = mysqli_fetch_array($auto);
-                      $kode = $isi['max_code'];
-                      $urutan = (int)substr($kode, 1, 2);
-                      $urutan++;
-                      $huruf = "B";
-                      $kd_biodata = $huruf . sprintf("%02s", $urutan);
-                    ?>
-                     <!-- Formulir HTML disini -->
-                    <form class="forms-sample" action="" method="POST" id="form-ketua" enctype="multipart/form-data">
-                    <input type="hidden" name="kd_biodata" value="<?php echo $kd_biodata; ?>">
-                        <div class="form-group">
-                            <label>Nama Lengkap</label>
-                            <input type="text" class="form-control" name="nama" autocomplete="off">
-                        </div>
+                <h4 class="card-title">Edit Data Biodata</h4>
+<?php
+include('../../setup/koneksi.php');
+if (isset($_GET['update'])) {
+    $query = mysqli_query($koneksi, "SELECT * FROM tb_biodata WHERE kd_biodata ='$_GET[update]'");
+    $data = mysqli_fetch_array($query);
+}
+?>
+<!-- Formulir HTML disini -->
+<form class="forms-sample" action="" method="POST" id="form-ketua" enctype="multipart/form-data">
+    <input type="hidden" name="kd_biodata" value="<?= isset($data['kd_biodata']) ? $data['kd_biodata'] : ''; ?>">
+    <div class="form-group">
+        <label>Nama Lengkap</label>
+        <input type="text" class="form-control" name="nama" value="<?= isset($data['nama']) ? $data['nama'] : ''; ?>" autocomplete="off">
+    </div>
+    <div class="form-group">
+        <label>NIK</label>
+        <input type="number" class="form-control" name="nik" value="<?= isset($data['nik']) ? $data['nik'] : ''; ?>" autocomplete="off">
+    </div>
+    <div class="form-group">
+        <label>Agama</label>
+        <select class="form-control" name="agama">
+            <option value="">---Silahkan Pilih---</option>
+            <option value="Islam" <?= ($data['agama'] == 'Islam') ? 'selected' : ''; ?>>Islam</option>
+            <option value="Kristen" <?= ($data['agama'] == 'Kristen') ? 'selected' : ''; ?>>Kristen</option>
+            <option value="Budha" <?= ($data['agama'] == 'Budha') ? 'selected' : ''; ?>>Budha</option>
+            <option value="Hindu" <?= ($data['agama'] == 'Hindu') ? 'selected' : ''; ?>>Hindu</option>
+            <option value="Konghucu" <?= ($data['agama'] == 'Konghucu') ? 'selected' : ''; ?>>Konghucu</option>
+            <option value="Katolik" <?= ($data['agama'] == 'Katolik') ? 'selected' : ''; ?>>Katolik</option>
+        </select>
+    </div>
+    <div class="form-group">
+        <label>Kewarganegaraan</label>
+        <select class="form-control" name="kewarganegaraan">
+            <option value="">---Silahkan Pilih---</option>
+            <option value="WNI" <?= ($data['kewarganegaraan'] == 'WNI') ? 'selected' : ''; ?>>WNI</option>
+            <option value="WNA" <?= ($data['kewarganegaraan'] == 'WNA') ? 'selected' : ''; ?>>WNA</option>
+        </select>
+    </div>
                     <div class="form-group">
-                      <label >NIK</label>
-                      <input type="number" class="form-control" name="nik"   autocomplete="off">
-                    </div>
-
-                    <div class="form-group">
-                      <label >Agama</label>
-                      <select class="form-control" name="agama" >
-                      <option>---Silahkan Pilih---</option>
-                          <option>Islam</option>
-                          <option>Kristen</option>
-                          <option>Budha</option>
-                          <option>Hindu</option>
-                          <option>Konghucu</option>
-                          <option>Katolik</option>
-                      <select>
-                    </div> 
-
-                    <div class="form-group">
-                      <label >Kewarganegaraan</label>
-                      <select class="form-control" name="kewarganegaraan" >
-                      <option>---Silahkan Pilih---</option>
-                          <option>WNI</option>
-                          <option>WNA</option>
-                        </select>
-                    </div> 
-
-                    <div class="form-group">
-                      <label>Jenis Kelamin</label>
-                      <div class="form-check">
-                          <label class="form-check-label">
-                              <input type="radio" class="form-check-input" name="jk" value="Laki-laki" checked>
-                              Laki-laki
-                          </label>
-                      </div>
-                      <div class="form-check">
-                          <label class="form-check-label">
-                              <input type="radio" class="form-check-input" name="jk" value="Perempuan">
-                              Perempuan
-                          </label>
-                      </div>
-                  </div>
+    <label>Jenis Kelamin</label>
+    <div class="form-check">
+        <label class="form-check-label">
+            <input type="radio" class="form-check-input" name="jk" value="Laki-laki" <?= (isset($data['jk']) && $data['jk'] == 'Laki-laki') ? 'checked' : ''; ?>>
+            Laki-laki
+        </label>
+    </div>
+    <div class="form-check">
+        <label class="form-check-label">
+            <input type="radio" class="form-check-input" name="jk" value="Perempuan" <?= (isset($data['jk']) && $data['jk'] == 'Perempuan') ? 'checked' : ''; ?>>
+            Perempuan
+        </label>
+    </div>
+</div>
 
                     <div class="form-group">
                       <label >Tempat Lahir</label>
-                      <input type="text" class="form-control" name="tempat_lahir" autocomplete="off">
+                      <input type="text" class="form-control" name="tempat_lahir" value="<?= isset($data['tempat_lahir']) ? $data['tempat_lahir'] : ''; ?>" autocomplete="off">
                     </div> 
                     
                     <div class="form-group">
                       <label >Tanggal Lahir</label>
-                      <input type="date" class="form-control" name="tanggal_lahir" autocomplete="off">
+                      <input type="date" class="form-control" name="tanggal_lahir" value="<?= isset($data['tanggal_lahir']) ? $data['tanggal_lahir'] : ''; ?>" autocomplete="off">
                     </div>
 
                     <div class="form-group">
                       <label >Status Perkawinan</label>
                       <select class="form-control" name="status_perkawinan" >
-                      <option>---Silahkan Pilih---</option>
-                          <option>Sudah</option>
-                          <option>Belum</option>
-                          <option>Cerai</option>
+                      <option >---Silahkan Pilih---</option>
+                          <option value="Sudah" <?= ($data['status_perkawinan'] == 'Sudah') ? 'selected' : ''; ?>>Sudah</option>
+                          <option value="Belum" <?= ($data['status_perkawinan'] == 'Belum') ? 'selected' : ''; ?>>Belum</option>
+                          <option value="Cerai" <?= ($data['status_perkawinan'] == 'Cerai') ? 'selected' : ''; ?>>Cerai</option>
                       <select>
                     </div> 
 
                     <div class="form-group">
                       <label >Alamat</label>
-                      <input type="alamat" class="form-control" name="alamat"  autocomplete="off">
+                      <input type="alamat" class="form-control" name="alamat" value="<?= isset($data['alamat']) ? $data['alamat'] : ''; ?>"  autocomplete="off">
                     </div>
 
                     <div class="form-group">
                       <label >No Hp.</label>
-                      <input type="number" class="form-control" name="no_telp"  autocomplete="off">
+                      <input type="number" class="form-control" name="no_telp" value="<?= isset($data['no_telp']) ? $data['no_telp'] : ''; ?>" autocomplete="off">
                     </div>
 
                     <div class="form-group">
                       <label >Pekerjaan</label>
-                      <input type="text" class="form-control" name="pekerjaan"  autocomplete="off">
+                      <input type="text" class="form-control" name="pekerjaan" value="<?= isset($data['pekerjaan']) ? $data['pekerjaan'] : ''; ?>"  autocomplete="off">
                     </div>
 
                     <div class="form-group">
                       <label >Nama Kantor</label>
-                      <input type="text" class="form-control" name="nama_kantor" autocomplete="off">
+                      <input type="text" class="form-control" name="nama_kantor" value="<?= isset($data['nama_kantor']) ? $data['nama_kantor'] : ''; ?>" autocomplete="off">
                     </div>
 
                     <div class="form-group">
                       <label >Alamat Kantor</label>
-                      <input type="text" class="form-control" name="alamat_kantor"  autocomplete="off">
+                      <input type="text" class="form-control" name="alamat_kantor" value="<?= isset($data['alamat_kantor']) ? $data['alamat_kantor'] : ''; ?>"  autocomplete="off">
                     </div>
                     <div class="form-group">
                       <label >Jabatan</label>
                       <select class="form-control" name="jabatan" >
                       <option>---Silahkan Pilih---</option>
-                          <option>Ketua</option>
-                          <option>Sekretaris</option>
-                          <option>Bendahara</option>
+                          <option value="Ketua" <?= ($data['jabatan'] == 'Ketua') ? 'selected' : ''; ?>>Ketua</option>
+                          <option value="Sekretaris" <?= ($data['jabatan'] == 'Sekretaris') ? 'selected' : ''; ?>>Sekretaris</option>
+                          <option value="Bendahara" <?= ($data['jabatan'] == 'Bendahara') ? 'selected' : ''; ?>>Bendahara</option>
                       <select>
                     </div> 
 
                     <div class="form-group">
-                      <label>Unggah Berkas</label>
-                      <input type="file" name="foto" class="file-upload-default">
-                      <div class="input-group col-xs-12">
-                        <input type="text" class="form-control file-upload-info" >
-                        <span class="input-group-append mx-2" >
-                          <button class="file-upload-browse btn btn-primary btn-sm" type="button">Upload</button>
-                        </span>
-                      </div>
+                        <label>Unggah Foto</label>
+                        <input type="file" name="foto" class="file-upload-default">
+                        <div class="input-group col-xs-12">
+                            <?php if (isset($data['foto']) && !empty($data['foto'])) : ?>
+                                <input type="text" class="form-control file-upload-info" value="<?= $data['foto']; ?>" readonly>
+                            <?php else : ?>
+                                <input type="text" class="form-control file-upload-info" readonly>
+                            <?php endif; ?>
+                            <span class="input-group-append mx-2">
+                                <button class="file-upload-browse btn btn-primary btn-sm" type="button">Upload</button>
+                            </span>
+                        </div>
                     </div>
 
-                    <button type="submit" class="btn btn-outline-primary btn-icon-text" name="simpan">
+
+                    <button type="submit" class="btn btn-outline-primary btn-icon-text" name="edit">
                           <i class="ti-file btn-icon-prepend"></i>Simpan
                     </button>
-                    <button type="reset" class="btn btn-outline-warning btn-icon-text" name="reset">
-                          <i class="ti-reload btn-icon-prepend"></i>Reset
-                    </button>
+                    
                   </form>
                 <div>
             </div>

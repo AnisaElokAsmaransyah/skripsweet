@@ -2,7 +2,6 @@
 <?php
 session_start();
     include('../../setup/koneksi.php');
-    
 ?>
 
 <!DOCTYPE html>
@@ -11,7 +10,7 @@ session_start();
 <head>
   <!-- Required meta tags -->
   <meta charset="utf-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
   <title>SiOrang</title>
   <!-- plugins:css -->
   <link rel="stylesheet" href="../../vendors/feather/feather.css">
@@ -28,12 +27,6 @@ session_start();
   <!-- endinject -->
   <link rel="shortcut icon" href="../../images/favicon.png" />
   <link rel="stylesheet" href="https://cdn.datatables.net/1.13.7/css/jquery.dataTables.min.css">
-  <!-- CSS PRINT -->
-  <!-- <link rel="stylesheet" href="https://cdn.datatables.net/1.13.7/css/jquery.dataTables.min.css">
-  <link rel="stylesheet" href="https://cdn.datatables.net/buttons/2.4.2/css/buttons.dataTables.min.css"> -->
-
-
-
 </head>
 
 <body>
@@ -59,6 +52,7 @@ session_start();
         <ul class="navbar-nav">
           <li class="nav-item font-weight-semibold d-none d-lg-block ms-0">
           <h1 class="welcome-text">Selamat Datang <span class="text-black fw-bold"><?php echo $_SESSION['nama'];?></span></h1>
+            
           </li>
         </ul>
         
@@ -149,6 +143,12 @@ session_start();
                 <li class="nav-item"> <a class="nav-link" href="input_berkas.php">Berkas</a></li>
               </ul>
             </div>
+
+            <div class="collapse" id="tables">
+              <ul class="nav flex-column sub-menu">
+                <li class="nav-item"> <a class="nav-link" href="kegiatan.php">Pengajuan Kegiatan</a></li>
+              </ul>
+            </div>
           </li>
           
           <li class="nav-item">
@@ -198,97 +198,101 @@ session_start();
             <div class="col-lg-12 grid-margin stretch-card">
               <div class="card">
                 <div class="card-header mt-3 bg-white">
-                  <h4 class="card-title">Balasan Ormas</h4>
+                  <h4 class="card-title">Data Pengaduan Masyarakat</h4>
                 </div>
                 <div class="card-body">
                   <div class="table-responsive">
-                    <table id="example" class="table table-striped" style="width:100%">
+                    <table id="example" class="table table-striped">
                       <thead>
-                        <tr>
-                              <th>No.</th>
-                              <th>Nama Pengadu</th>
-                              <th>Nomor Hp</th>
-                              <th>Alamat</th>
-                              <th>Jenis Pengaduan</th>
-                              <th>Isi</th>
-                              <th>Status</th>
-                              <th>Tanggapan</th>
-                              <th>Aksi</th>
-                             </tr>
+                      <tr>
+                                        <th>No</th>
+                                        <th>Nama Organisasi</th>
+                                        <th>Deskripsi</th>
+                                        <th>Tanggal Kegiatan</th>
+                                        <th>Lokasi</th>
+                                        <th>Surat Izin</th>
+                                        <th>Aksi</th>
+                                       
+                        </tr>
                       </thead>
                       <tbody>
-                        <?php 
+                      <?php 
                             $no = 1;
-                            $tampil ="SELECT * FROM tb_pengaduan
-                            WHERE status = 'validasi ormas' ";
-                            $result = mysqli_query($koneksi,$tampil);
-                            while ($data = mysqli_fetch_array($result)){
-                        ?>
-                        <tr>
-                            <td><?= $no++ ?></td>
-                            <td><?= $data['nama'] ?></td>
-                            <td><?= $data['no_hp'] ?></td>
-                            <td><?= $data['alamat'] ?></td>
-                            <td><?= $data['jenis_pengaduan'] ?></td>
-                            <td><?= $data['isi'] ?></td>
-                            <td><?= $data['status'] ?></td>
-                            <td><?= $data['tanggapan']?></td>
-                            <?php 
-                                if ($data['status'] == 'validasi ormas') {
+                            $id_pengguna = $_SESSION['id_pengguna'];
+                            $tampil = mysqli_query($koneksi, "SELECT tb_pengguna.nama as nama_pengguna,tb_kegiatan.kd_kegiatan as kd_kegiatan, tb_kegiatan.deskripsi as deskripsi, tb_kegiatan.tgl_kegiatan as tgl_kegiatan, tb_kegiatan.lokasi as lokasi,
+                            tb_kegiatan.tgl_ajuan as tgl_ajuan, tb_kegiatan.file as file, tb_kegiatan.status as status from tb_kegiatan INNER JOIN tb_pengguna ON 
+                            tb_pengguna.id_pengguna = tb_kegiatan.id_pengguna where tb_kegiatan.status = 'terkirim'  ORDER BY kd_kegiatan");
+                            
+
+                             while ($data = mysqli_fetch_array($tampil)){?>
+                            <tr>
+                                <td><?= $no++ ?></td>
+                                <td><?= $data['nama_pengguna'] ?></td>
+                                <td><?= $data['deskripsi'] ?></td>
+                                <td><?= $data['tgl_kegiatan'] ?></td>
+                                <td><?= $data['lokasi'] ?></td>
+                                <td><?= $data['file'] ?></td>
+                                <?php 
+                                if ($data['status'] == 'terkirim') {
                               ?>
-                            <td>
-                                <form action="balasan_ormas.php" method="POST">
-                                  <input type="hidden" name="kd_pengaduan" value="<?= $data['kd_pengaduan']; ?>"/>
-                                  <input type="submit" class="btn btn-primary btn-sm" name="selesai" value="Selesai" />
-                                  <input type="submit" class="btn btn-success btn-sm" name="kirim" value="Kirim" />
+                              <td>
+                                <form action="" method="POST">
+                                  <input type="hidden" name="kd_kegiatan" value="<?= $data['kd_kegiatan']; ?>"/>
+                                  <input type="submit" class="btn btn-warning btn-sm" name="kirim" value="Kirim" />
+                                  <!-- <input type="submit" class="btn btn-danger btn-sm" name="tidaksetuju" value="Tolak" /> -->
                                 </form>
-                            </td>
-                            <?php
-                                }else if($data['status'] == 'selesai'){
-                              ?>
-                              <td>Selesai</td>
+                              </td>
                               <?php
-                              }elseif ($data['status'] == 'kirim') {
-                            ?>
-                                <td>Tindak Lanjut</td>
-                            <?php
+                                }else if($data['status'] == 'kirim'){
+                              ?>
+                              <td>tindak lanjut </td>
+                              <?php
                               }
                               ?>
-                            
-                        </div>
-                    </div>
-                    </tr>
+                        </tr>
                         <?php } ?>
-                      </tbody>
-                    </table>
-                    <?php
-                      if(isset($_POST['selesai'])){
-                        $kd_pengaduan = $_POST['kd_pengaduan'];
+                        </tbody>
+                        </table>
+<?php
+if(isset($_POST['kirim'])){
+    $kd_kegiatan = $_POST['kd_kegiatan'];
 
-                        $select = "UPDATE tb_pengaduan SET status ='selesai' WHERE kd_pengaduan = '$kd_pengaduan' ";
-                        $result = mysqli_query($koneksi,$select);
-                        echo "<script>
-                        document.location='../../pages/forms/balasan_ormas.php';
-                       </script>";
-                      }
-                      if(isset($_POST['kirim'])){
-                        $kd_pengaduan = $_POST['kd_pengaduan'];
+    $select = "UPDATE tb_kegiatan SET status ='tindak lanjut' WHERE kd_kegiatan = '$kd_kegiatan' ";
+    $result = mysqli_query($koneksi, $select);
+    echo "<script>
+            alert('Data berhasil dikirim !');
+            document.location='kegiatan.php';
+          </script>";
+}
+?>
+         </div>
+                                </div>
+                            </div>
+                          </div>
 
-                        $select = "UPDATE tb_pengaduan SET status ='tindak lanjut' WHERE kd_pengaduan = '$kd_pengaduan' ";
-                        $result = mysqli_query($koneksi,$select);
-                        echo "<script>
-                        alert('Berhasil Dikirim !');
-                        document.location='../../pages/forms/balasan_ormas.php';
-                       </script>";
-                      }
-                    ?>
-                
+                                  </div>
+                                 
+                              </div>
+                              
                             </div>
                           </div>
                         </div>
                       </div>
-                      </div>   
-                  </div>
+                      </div>
+
+                        </tr>
+                        
+                      </tbody>
+                    </table>
+                    
+                        </tr>
+                        
+
+                      </tbody>
+                      
+                        
+                    </table>
+                 </div>
                 </div>
               </div>
             </div>
@@ -328,47 +332,6 @@ session_start();
   <script>
     new DataTable('#example');
   </script>
-
-  <!--jquery print--->
-  <!-- <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
-<script src="https://cdn.datatables.net/1.13.7/js/jquery.dataTables.min.js"></script>
-<script src="https://cdn.datatables.net/buttons/2.4.2/js/dataTables.buttons.min.js"></script>
-<script src="https://cdnjs.cloudflare.com/ajax/libs/jszip/3.10.1/jszip.min.js"></script>
-<script src="https://cdnjs.cloudflare.com/ajax/libs/pdfmake/0.1.53/pdfmake.min.js"></script>
-<script src="https://cdnjs.cloudflare.com/ajax/libs/pdfmake/0.1.53/vfs_fonts.js"></script>
-<script src="https://cdn.datatables.net/buttons/2.4.2/js/buttons.html5.min.js"></script>
-<script src="https://cdn.datatables.net/buttons/2.4.2/js/buttons.print.min.js"></script> -->
-
-<!-- <script>
-$(document).ready(function() {
-    $('#example').DataTable( {
-        dom: 'Bfrtip',
-        buttons: [
-            {
-                extend: 'copy',
-                title: 'Data Copy'
-            },
-            {
-                extend: 'csv',
-                title: 'Data CSV'
-            },
-            {
-                extend: 'excel',
-                title: 'Data Excel'
-            },
-            {
-                extend: 'pdf',
-                title: 'Data PDF'
-            },
-            {
-                extend: 'print',
-                title: 'Data Print'
-            }
-        ]
-    } );
-} );
-</script> -->
-
 </body>
 
 </html>

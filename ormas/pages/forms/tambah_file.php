@@ -5,7 +5,7 @@ include('../../setup/koneksi.php');
 if (isset($_POST['simpan'])) {
     $kd_berkas = $_POST['kd_berkas'];
     $judul = $_POST['judul'];
-    $id_pengguna = $_POST['id_pengguna'];
+    $id_pengguna = $_SESSION['id_pengguna']; // Menggunakan id_pengguna dari session
 
     $eks_boleh = array('pdf', 'docx');
     $file = $_FILES['file']['name'];
@@ -69,6 +69,8 @@ if (isset($_POST['simpan'])) {
     }
 }
 ?>
+
+<!-- ... (HTML lainnya tetap sama) ... -->
 
 
 
@@ -172,10 +174,10 @@ if (isset($_POST['simpan'])) {
             </a>
             <div class="collapse" id="form-elements">
               <ul class="nav flex-column sub-menu">
-                <li class="nav-item"><a class="nav-link" href="../../pages/forms/biodata.php">Biodata Pengurus</a></li>
+                <li class="nav-item"><a class="nav-link" href="biodata.php">Biodata Pengurus</a></li>
               </ul>
               <ul class="nav flex-column sub-menu">
-                <li class="nav-item"><a class="nav-link" href="../../pages/forms/file.php">File</a></li>
+                <li class="nav-item"><a class="nav-link" href="file.php">File</a></li>
               </ul>
               </div>
           </li>
@@ -188,12 +190,12 @@ if (isset($_POST['simpan'])) {
             </a>
             <div class="collapse" id="tables">
               <ul class="nav flex-column sub-menu">
-                <li class="nav-item"> <a class="nav-link" href="pages/tables/rencana.php">Rencana</a></li>
+                <li class="nav-item"> <a class="nav-link" href="rencana.php">Rencana</a></li>
               </ul>
             </div>
             <div class="collapse" id="tables">
               <ul class="nav flex-column sub-menu">
-                <li class="nav-item"> <a class="nav-link" href="pages/tables/terlaksana.php">Terlaksana</a></li>
+                <li class="nav-item"> <a class="nav-link" href="terlaksana.php">Terlaksana</a></li>
               </ul>
             </div>
             </li>
@@ -206,10 +208,10 @@ if (isset($_POST['simpan'])) {
             </a>
             <div class="collapse" id="icons">
               <ul class="nav flex-column sub-menu">
-                <li class="nav-item"> <a class="nav-link" href="pages/forms/tanggapi.php">Tanggapi</a></li>
+                <li class="nav-item"> <a class="nav-link" href="tanggapi.php">Tanggapi</a></li>
               </ul>
 			       <ul class="nav flex-column sub-menu">
-                <li class="nav-item"> <a class="nav-link" href="pages/forms/laporan.php">Laporan Selesai</a></li>
+                <li class="nav-item"> <a class="nav-link" href="laporan.php">Laporan Selesai</a></li>
               </ul>
             </div>
           </li>
@@ -247,7 +249,7 @@ if (isset($_POST['simpan'])) {
                     </div>
                     <br>
                     <input type="hidden" name="kd_berkas" value="<?php echo $kd_berkas; ?>">
-                    <input type="hidden" name="id_pengguna" value="<?php echo $id_pengguna; ?>">
+                   
                     <div class="form-group">
                         <label>Deskripsi</label>
                         <input type="text" class="form-control" name="judul" autocomplete="off">

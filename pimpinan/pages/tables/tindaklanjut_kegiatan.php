@@ -1,8 +1,7 @@
 
 <?php
 session_start();
-    include('../../setup/koneksi.php');
-    
+   
 ?>
 
 <!DOCTYPE html>
@@ -56,7 +55,7 @@ session_start();
             
           </li>
         </ul>
-       
+        
         <button class="navbar-toggler navbar-toggler-right d-lg-none align-self-center" type="button" data-bs-toggle="offcanvas">
           <span class="mdi mdi-menu"></span>
         </button>
@@ -119,8 +118,8 @@ session_start();
               <ul class="nav flex-column sub-menu">
                 <li class="nav-item"> <a class="nav-link" href="tindakan.php">Tindak Lanjut</a></li>
               </ul>
-            </div>
-            <div class="collapse" id="icons">
+              </div>
+              <div class="collapse" id="icons">
               <ul class="nav flex-column sub-menu">
                 <li class="nav-item"> <a class="nav-link" href="laporan.php">Laporan Selesai</a></li>
               </ul>
@@ -143,120 +142,171 @@ session_start();
             <div class="col-lg-12 grid-margin stretch-card">
               <div class="card">
                 <div class="card-header mt-3 bg-white">
-                  <h4 class="card-title">Tanggapi Aduan</h4>
+                  <h4 class="card-title">Data Pengajuan Kegiatan</h4>
                 </div>
                 <div class="card-body">
                   <div class="table-responsive">
                     <table id="example" class="table table-striped">
                       <thead>
                         <tr>
-                            <th>No.</th>
-                              <th>Nama Pengadu</th>
-                              <th>Alamat</th>
-                              <th>Jenis Pengaduan</th>
-                              <th>Isi</th>
-                              <th>Tanggal Pengaduan</th>
-                              <th>Status</th>
-                              <th>Aksi</th>
-                             </tr>
+                                        <th>No</th>
+                                        <th>Nama Organisasi</th>
+                                        <th>Deskripsi</th>
+                                        <th>Tanggal Kegiatan</th>
+                                        <th>Lokasi</th>
+                                        <th>Aksi</th>
+                        </tr>
                       </thead>
                       <tbody>
                         <?php 
+                          include('../../setup/koneksi.php');
                             $no = 1;
-                            $tampil ="SELECT * FROM tb_pengaduan
-                            WHERE status = 'tindak lanjut' ";
-                            $result = mysqli_query($koneksi,$tampil);
-                            while ($data = mysqli_fetch_array($result)){
-                        ?>
-                        <tr>
-                            <td><?= $no++ ?></td>
-                            <td><?= $data['nama'] ?></td>
-                            <td><?= $data['alamat'] ?></td>
-                            <td><?= $data['jenis_pengaduan'] ?></td>
-                            <td><?= $data['isi'] ?></td>
-                           <td><?= $data['tgl_aduan'] ?></td>
-                            <td><?= $data['status'] ?></td>
-                            <td>
-                              <button type="button" class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#staticBackdrop<?= $data['kd_pengaduan']; ?>">
-                                Tanggapi
-                              </button>
-                            </td>
-                        <!-- Modal -->
-                        <div class="modal fade " id="staticBackdrop<?= $data['kd_pengaduan']; ?>" data-bs-backdrop="static" data-bs-keyboard="false" tabindex="-1" aria-labelledby="staticBackdropLabel" aria-hidden="true">
-                          <div class="modal-dialog">
-                            <div class="modal-content">
-                              <div class="modal-header">
-                                <h1 class="modal-title fs-5" id="staticBackdropLabel">Beri Tanggapan</h1>
-                                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
-                              </div>
-                              <div class="modal-body">
-                              <div align = left>
-                                      <div style="display: flex; justify-content: space-between;">
-                                      <div>
-                                          <font size="1"><i><?= $data['tgl_aduan'] ?></i></font>
-                                      </div>
-                                      <div>
-                                      <font size="1"><?= $data['status'] ?></font>
-                                      </div>
-                                      </div>
-                                                   <h6><?= $data['nama'] ?></h6>
-                                                    <h5><b><?= $data['jenis_pengaduan'] ?></b></h5>
-                                                        <!-- Display isi_laporan here -->
+                            $id_pengguna = $_SESSION['id_pengguna'];
+                            $tampil = mysqli_query($koneksi, "SELECT tb_pengguna.nama as nama_pengguna,tb_kegiatan.kd_kegiatan as kd_kegiatan, tb_kegiatan.deskripsi as deskripsi, tb_kegiatan.tgl_kegiatan as tgl_kegiatan, tb_kegiatan.lokasi as lokasi,
+                            tb_kegiatan.tgl_ajuan as tgl_ajuan, tb_kegiatan.file as file, tb_kegiatan.status as status from tb_kegiatan INNER JOIN tb_pengguna ON 
+                            tb_pengguna.id_pengguna = tb_kegiatan.id_pengguna where tb_kegiatan.status = 'tindak lanjut'  ORDER BY kd_kegiatan");
+                            
 
-                                                        <?= $data['isi'] ?> <!-- Display isi_laporan here -->
-                                                        
+                             while ($data = mysqli_fetch_array($tampil)){?>
+                            <tr>
+                                <td><?= $no++ ?></td>
+                                <td><?= $data['nama_pengguna'] ?></td>
+                                <td><?= $data['deskripsi'] ?></td>
+                                <td><?= $data['tgl_kegiatan'] ?></td>
+                                <td><?= $data['lokasi'] ?></td>
+                          <td>
+                          <button type="button" class="btn btn-success" data-bs-toggle="modal" data-bs-target="#terima<?=$data['kd_kegiatan']?>">
+                            Terima
+                          </button>
+                          <button type="button" class="btn btn-danger" data-bs-toggle="modal" data-bs-target="#tolak<?=$data['kd_kegiatan']?>">
+                            Tolak
+                          </button>
+                          </td>
 
-
-                                                        </div>
-                                                    
-                                                        <?php
-                                        if (!empty($data['file'])) {
-                                            echo '<br>';
-                                            echo '<img src="../../../images/bukti_pengaduan/' . $data['file'] . '" alt="" height="210px" style="padding-top:10px">';
-                                          }
-                                        ?>
-                                      <div align=left>
-                                      <br>
-                                      <?php 
+                          <div class="modal fade" id="terima<?=$data['kd_kegiatan']?>" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
+                            <div class="modal-dialog">
+                              <div class="modal-content">
+                                <div class="modal-header">
+                                  <h1 class="modal-title fs-5" id="exampleModalLabel">Beri Tanggapan</h1>
+                                  <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                                </div>
+                                <div class="modal-body">
+                                <?php 
                                       if($data['status'] =="tindak lanjut"){ ?>
                                       <div class="col s12 m6">
                                   <form method="POST">
-                                  <input type="hidden" name="kd_pengaduan" value="<?= $data['kd_pengaduan'] ?>">
+                                  <input type="hidden" name="kd_kegiatan" value="<?= $data['kd_kegiatan'] ?>">
                                   <div class="form-group">
-                                  <span class="response-label">Beri Tanggapan : </span>
-                                      <textarea class="form-control" id="tanggapan" name="tindakan" rows="5" required></textarea>
+                                      <label for="file_tindakan">Upload Berkas</label>
+                                      <input type="file" name="file_tindakan" class="form-control-file">
                                   </div>
                                     <div class="col s12 input-field">
-                                      <input type="submit" name="tanggapi" value="Kirim" class="btn btn-primary btn">
+                                      <input type="submit" name="terima" value="Kirim" class="btn btn-primary btn">
+                                    </div>
+                                  </form>
+                                  </div>
+                                    <?php	}
+                                      ?>
+                                </div>
+                              </div>
+                            </div>
+                          </div>
+
+                          <div class="modal fade" id="tolak<?=$data['kd_kegiatan']?>" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
+                          <div class="modal-dialog">
+                            <div class="modal-content">
+                              <div class="modal-header">
+                                <h1 class="modal-title fs-5" id="exampleModalLabel">Beri Tanggapan</h1>
+                                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                              </div>
+                              <div class="modal-body">
+                             <?php 
+                                      if($data['status'] =="tindak lanjut"){ ?>
+                                      <div class="col s12 m6">
+                                  <form method="POST">
+                                  <input type="hidden" name="kd_kegiatan" value="<?= $data['kd_kegiatan'] ?>">
+                                  <div class="form-group">
+                                  <span class="response-label">Beri Tanggapan : </span>
+                                      <textarea class="form-control" id="tanggapan" name="tanggapan" rows="5" required></textarea>
+                                  </div>
+                                    <div class="col s12 input-field">
+                                      <input type="submit" name="kirim" value="Kirim" class="btn btn-primary btn">
                                     </div>
                                   </form>
                                       </div>
                                     <?php	}
                                       ?>
 
-                                    <?php
-                                    if(isset($_POST['tanggapi'])){
-                                        $kd_pengaduan = $_POST['kd_pengaduan'];
-                                        $tindakan = $_POST['tindakan'];
-                                        $tanggal = date('Y-m-d');
-                                        $jam = date('H:i:s');
-                                        $current_time = date('Y-m-d H:i:s');
+<?php
+if (isset($_POST['kirim'])) {
+    $kd_kegiatan = $_POST['kd_kegiatan'];
+    $status_kegiatan = isset($_POST['status']) ? $_POST['status'] : '';
+    $current_time = date('Y-m-d H:i:s');
 
-                                        // Update status 
-                                        $queryUpdate = "UPDATE tb_pengaduan SET status = 'selesai', tindakan = '$tindakan', tgl_tindakan = '$current_time' WHERE kd_pengaduan = '$kd_pengaduan'";
-                                        
-                                        if ($koneksi->query($queryUpdate) === TRUE) {
-                                            echo "<script>
-                                                document.location='tindakan.php';
-                                            </script>";
-                                            exit();
-                                        } else {
-                                            echo "Gagal melakukan pembaruan: " . $koneksi->error;
-                                        }
-                                    }
-                                    ?>
+    if ($status_kegiatan == 'setuju') {
+        $fileSuratIzin = $_FILES['file_tindakan'];
 
-                                  </div>
+        // Periksa apakah file surat izin diunggah
+        if (!empty($fileSuratIzin['file_tindakan'])) {
+            // Periksa ekstensi file
+            $allowedExtensions = ['pdf', 'doc', 'docx'];
+            $fileExtension = strtolower(pathinfo($fileSuratIzin['file_tindakan'], PATHINFO_EXTENSION));
+
+            if (in_array($fileExtension, $allowedExtensions)) {
+                // Unggah file ke direktori yang diinginkan
+                $uploadDir = "../../../images/kegiatan/";
+                $uploadPath = $uploadDir . $fileSuratIzin['file_tindakan'];
+
+                move_uploaded_file($fileSuratIzin['tmp_name'], $uploadPath);
+
+                // Update status menjadi "selesai" dan file_tindakan
+                $queryUpdate = "UPDATE tb_kegiatan SET status = 'selesai', file_tindakan = '$fileSuratIzin[file_tindakan]', tgl_tindakan = '$current_time' WHERE kd_kegiatan = '$kd_kegiatan'";
+            } else {
+                echo "<script>
+                    alert('Ekstensi file tidak valid. Hanya diperbolehkan PDF, DOC, atau DOCX.');
+                    window.location.href='tindaklanjut_kegiatan.php';
+                </script>";
+                exit();
+            }
+        } else {
+            echo "<script>
+                alert('File surat izin harus diunggah jika menyetujui.');
+                window.location.href='tindaklanjut_kegiatan.php';
+            </script>";
+            exit();
+        }
+    } elseif ($status_kegiatan == 'tidak_setuju') {
+        // Jika tombol tidak setuju diklik
+        // Update status menjadi "ditolak" dan tanggapan
+        $tanggapan = isset($_POST['tanggapan']) ? $_POST['tanggapan'] : '';
+        $queryUpdate = "UPDATE tb_kegiatan SET status = 'ditolak', tanggapan = '$tanggapan', tgl_tindakan = '$current_time' WHERE kd_kegiatan = '$kd_kegiatan'";
+    } else {
+        echo "<script>
+            alert('Pilihan status kegiatan tidak valid.');
+            window.location.href='tindaklanjut_kegiatan.php';
+        </script>";
+        exit();
+    }
+
+    // Eksekusi query
+    if ($koneksi->query($queryUpdate) === TRUE) {
+        echo "<script>
+            alert('Data berhasil dikirim. Status kegiatan: $status_kegiatan, Tanggapan: $tanggapan');
+            window.location.href='tindaklanjut_kegiatan.php';
+        </script>";
+        exit();
+    } else {
+        echo "<script>
+            alert('Gagal melakukan pembaruan: " . $koneksi->error . "');
+            window.location.href='tindaklanjut_kegiatan.php';
+        </script>";
+        exit();
+    }
+}
+?>
+
+
+                                 </div>
                                  
                               </div>
                               
@@ -269,14 +319,6 @@ session_start();
                         </tr>
                         <?php } ?>
                       </tbody>
-                    </table>
-                    
-                        </tr>
-                        
-
-                      </tbody>
-                      
-                        
                     </table>
                     
                   </div>
@@ -319,9 +361,6 @@ session_start();
   <script>
     new DataTable('#example');
   </script>
-
-
-
 </body>
 
 </html>
